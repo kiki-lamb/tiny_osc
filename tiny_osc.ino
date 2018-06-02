@@ -6,7 +6,7 @@
 
 using namespace lambOS;
 
-#define VOICES 2
+#define VOICES 3 // 3 will cause buffer underruns/frequency loss if compiled without -O3.
 
 #include "math.h"
 #include "osc.h"
@@ -18,22 +18,21 @@ using namespace lambOS;
 
 void setup() {
   setup_led();  
-  setup_oscs();
-  setup_audio(); 
   setup_wire();
+
+  for (uint16_t ix = 0, f = 60; ix < VOICES; ix ++, f += 60) {
+    oscs[ix].wave = osc_type::wf_sine;
+    oscs[ix].set_hz(f, 0);
+  }
   
-  oscs[0].wave = 3;
-  oscs[1].wave = 3;
-  
-  oscs[0].set_hz(60, 0);
-  oscs[1].set_hz(120, 0);
-  
+  setup_audio(); 
   setup_timers();
 }
 
 void soft_timer() {
   if (stime < 15000) 
     return;
+    
   stime = 0;
   
   flip_led();
@@ -59,9 +58,9 @@ void soft_timer() {
       note = 12; break;
   }
 
-  oscs[0].set_note(48 + note); // xx);
-  oscs[1].set_note(48 + note + 12); // xx);
-
+  for (uint16_t ix = 0, f = 48 + note; ix < VOICES; ix ++, f += 12)
+    oscs[ix].set_note(f);
+  
   ix ++;
   ix %= 8;
 }

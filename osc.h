@@ -34,9 +34,11 @@ class Oscillator {
   typedef sample_type_traits<sample_type> traits;
   static const uint32_t hz_phincr = UINT32_MAX/SRATE;
     
+  enum waveform { wf_silence, wf_saw, wf_square, wf_sine }; 
+
   int8_t octave;
   uint8_t amp;
-  uint8_t wave;
+  waveform wave;
   uint32_t phacc;
   uint32_t phincr;
   uint32_t detune_phincr;
@@ -64,11 +66,12 @@ class Oscillator {
   template <uint8_t voices> 
   static inline sample_type play_mixed(Oscillator* os) { // converts out to unsigned!       
     typename traits::mix_type mix = 0;
-    
+    static const uint8_t amp = voices == 1 ? 255 : (UINT8_MAX+1)/voices;
+
     for (uint8_t v = 0; v < voices; v++)
       mix += os[v].read();
   
-    return mul_U8S(mix, 128);
+    return mul_U8S<amp>(mix);
   }
 
   inline sample_type read() {
@@ -94,13 +97,5 @@ typedef Oscillator<int8_t> osc_type;
 
 osc_type oscs[VOICES];
 
-void setup_oscs() { 
-  pinMode(A1, INPUT);
-  delay(50);
-  srand(analogRead(A1));
-
-  for (uint8_t ix = 0; ix < VOICES; ix++)
-    oscs[ix].phacc = rand();
-}
 
 
