@@ -1,8 +1,10 @@
-template <typename sample_type>
-static inline sample_type attenuate(
-    sample_type sample,
-    uint8_t level_q0n8
-  ) {
-  return sample * level_q0n8 >> 8;  
+template <uint8_t S = 8, typename T1>
+inline T1 mul_U8S(T1 x, uint8_t y) {
+  return x * y >> S;  
+}
+
+template <uint8_t Y, uint8_t S = 8, typename T1>
+inline T1 mul_U8S(T1 x) {
+  return x * Y >> S;  
 }
 

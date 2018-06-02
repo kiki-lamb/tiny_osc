@@ -50,28 +50,17 @@ class Oscillator {
     detune_phincr(0) {}
 
   inline void set_hz(uint16_t hz_q16n0, uint8_t hz_q0n8) {
-    phincr = (hz_phincr * hz_q16n0) + ((hz_phincr * hz_q0n8) >> 8);
-  }
-
-  inline void set_detune_hz(uint16_t hz_q4n4) {
-    detune_phincr = (hz_phincr*hz_q4n4) >> 4;
+    phincr = (hz_phincr * hz_q16n0) + (hz_phincr * hz_q0n8 >> 8);
   }
 
   inline void set_note(uint8_t note) {
     phincr = pgm_read_dword(notes + note); 
   }  
 
-//  static inline typename traits::mix_type attenuate(
-//    typename traits::mix_type sample,
-//    uint8_t level_q0n8
-//  ) {
-//    return sample * level_q0n8 >> 8;  
-//  }
-  
-  inline sample_type read() {
-    return read_private();
+  inline void set_detune_hz(uint16_t hz_q4n4) {
+    detune_phincr = hz_phincr*hz_q4n4 >> 4;
   }
-
+  
   template <uint8_t voices> 
   static inline sample_type play_mixed(Oscillator* os) { // converts out to unsigned!       
     typename traits::mix_type mix = 0;
@@ -79,25 +68,24 @@ class Oscillator {
     for (uint8_t v = 0; v < voices; v++)
       mix += os[v].read();
   
-    return attenuate(mix, 128);
+    return mul_U8S(mix, 128);
   }
 
-  private:
-  inline sample_type read_private() {
-   phacc += (phincr + detune_phincr) << octave;
+  inline sample_type read() {
+   phacc += phincr + detune_phincr << octave;
    
    switch (wave) {
     case 0:
       return traits::silence;
     case 1:
-      return ((phacc >> 24)) + traits::minimum;
+      return (phacc >> 24) + traits::minimum;
     case 2:
       return phacc > (1L << 31) ? traits::maximum : traits::minimum;
     case 3: {
       return pgm_read_byte(traits::sine_table+(phacc >> 24));
     }
+   }
   }
-}
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
