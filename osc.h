@@ -1,6 +1,7 @@
 #define SRATE 50000
 
 #include "sample_type_traits.h"
+#include "dsp.h"
 
 const uint32_t notes[] PROGMEM  = {
   561833, 595241, 630636, 668136, 707865, 749957,
@@ -56,39 +57,19 @@ class Oscillator {
     detune_phincr = (hz_phincr*hz_q4n4) >> 4;
   }
 
-  inline void set_phincr_msb(uint8_t msb) {
-    phincr = ((uint32_t)msb) << 24;
-  }
-
   inline void set_note(uint8_t note) {
     phincr = pgm_read_dword(notes + note); 
-  }
-  
-  inline sample_type play_private() {
-     phacc += (phincr + detune_phincr) << octave;
-     
-     switch (wave) {
-      case 0:
-        return traits::silence;
-      case 1:
-        return ((phacc >> 24)) + traits::minimum;
-      case 2:
-        return phacc > (1L << 31) ? traits::maximum : traits::minimum;
-      case 3: {
-        return pgm_read_byte(traits::sine_table+(phacc >> 24));
-      }
-    }
-  }
+  }  
 
-  static inline sample_type attenuate(
-    typename traits::mix_type sample,
-    uint8_t level_q0n8
-  ) {
-    return sample * level_q0n8 >> 8;  
-  }
+//  static inline typename traits::mix_type attenuate(
+//    typename traits::mix_type sample,
+//    uint8_t level_q0n8
+//  ) {
+//    return sample * level_q0n8 >> 8;  
+//  }
   
-  inline sample_type play() {
-    return play_private();
+  inline sample_type read() {
+    return read_private();
   }
 
   template <uint8_t voices> 
@@ -96,10 +77,27 @@ class Oscillator {
     typename traits::mix_type mix = 0;
     
     for (uint8_t v = 0; v < voices; v++)
-      mix += os[v].play();
+      mix += os[v].read();
   
     return attenuate(mix, 128);
   }
+
+  private:
+  inline sample_type read_private() {
+   phacc += (phincr + detune_phincr) << octave;
+   
+   switch (wave) {
+    case 0:
+      return traits::silence;
+    case 1:
+      return ((phacc >> 24)) + traits::minimum;
+    case 2:
+      return phacc > (1L << 31) ? traits::maximum : traits::minimum;
+    case 3: {
+      return pgm_read_byte(traits::sine_table+(phacc >> 24));
+    }
+  }
+}
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

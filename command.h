@@ -10,13 +10,11 @@
 
 // 0    0    0    0    VM3  VM2  VM1  VM0    PHRS N6   N5   N4   N3   N2   N1   N0     Change pitch (MIDI note), N7:0 = note number, PHRS = phacc reset 
 // 0    0    0    1    VM3  VM2  VM1  VM0    V3   V2   V1   V0   WF1  WF0  OC1  OC0    Config osc A, WF1:0 = waveforfm, OC1:0 = octave select  
-// 0    0    1    1    VM3  VM2  VM1  VM0    PH7  PH6  PH5  PH4  PH3  PH2  PH1  PH0    Change pitch (phincr MSB), PH7:0 = phincr MSB
 // 0    1    0    0    VM3  VM2  VM1  VM0    H7   H6   H5   H4   H3   H2   H1   H0     Change pitch (hz), H8:0 = hz
 // 0    1    0    1    VM3  VM2  VM1  VM0    H7   H6   H5   H4   H3   H2   H1   H0     Change detune pitch (hz), H8:0 = hz
 
 #define CMD_CONFIG_OSC      16 // 0b00010000
 #define CMD_SET_NOTE        0  // 32 //  0b00100000
-#define CMD_SET_PHINCR      48 // 48 //  0b00110000
 #define CMD_SET_HZ          64 // 64 //  0b01000000
 #define CMD_SET_DETUNE_HZ   80 // 64 //  0b01010000
 
@@ -43,9 +41,6 @@ inline void command(uint8_t cmd_byte, uint8_t param) {
         case CMD_SET_NOTE:
            oscs[ix].set_note(param & CMD_SET_NOTE__NOTE);
            if (param & CMD_SET_NOTE__PHRS) oscs[ix].phacc = 0;
-           break;
-        case CMD_SET_PHINCR:
-           oscs[ix].set_phincr_msb(param);
            break;
         case CMD_SET_HZ:        
            oscs[ix].set_hz(param, 0);
