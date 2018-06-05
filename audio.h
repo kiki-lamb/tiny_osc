@@ -6,6 +6,20 @@
 
 volatile uint32_t stime = 0;
 
+int8_t lastOutput;
+int8_t lastOutput2;
+int8_t lastOutput3;
+
+int8_t doLPF(int8_t input) {
+    int8_t distanceToGo = input - lastOutput;
+    lastOutput += distanceToGo >> 1; // Lower / higher number here will lower / raise the cutoff frequency
+    distanceToGo = lastOutput - lastOutput2;
+    lastOutput2 += distanceToGo >> 1; 
+    distanceToGo = lastOutput2 - lastOutput3;
+    lastOutput3 += distanceToGo >> 1; 
+    return lastOutput3;
+}
+
 inline uint8_t generate_sample() {
   static uint8_t ix = 0;
   static uint8_t last_env = 0;
@@ -18,10 +32,10 @@ inline uint8_t generate_sample() {
   }
 
   return osc_type::traits::to_uint8_t(
-    mul_T1U8S<8>(
+    doLPF(mul_T1U8S<8>(
         lpf.read ( osc_type::play_mixed<VOICES>(oscs), last_lfo ),
         last_env // amp
-      )
+      ))
   );
 }
 
