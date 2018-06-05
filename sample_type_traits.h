@@ -1,4 +1,3 @@
-
 template <typename sample_t> class sample_type_traits {
 //  public:
 //    typedef sample_t value_type;

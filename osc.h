@@ -65,17 +65,26 @@ class Oscillator {
   
   template <uint8_t voices> 
   static inline sample_type play_mixed(Oscillator* os) { // converts out to unsigned!       
-    typename traits::mix_type mix = 0;
-    static const uint8_t amp = voices == 1 ? 255 : (UINT8_MAX+1)/voices;
+    if (voices == 1) 
+      return os[0].read();
+    else if (voices == 2) 
+      return (os[0].read() >> 1) + (os[1].read() >> 1);
+    else if (voices == 3)
+      return (os[0].read() >> 2) + (os[1].read() >> 2) + (os[2].read() >> 2);
+    else if (voices == 4)
+      return (os[0].read() >> 2) + (os[1].read() >> 2) + (os[2].read() >> 2) + (os[3].read() >> 2);
 
-    for (uint8_t v = 0; v < voices; v++)
-      mix += os[v].read();
-  
-    return mul_U8S<amp>(mix);
+//    typename traits::mix_type mix = 0;
+//    static const uint8_t amp = voices == 1 ? 255 : (UINT8_MAX+1)/voices;
+//
+//    for (uint8_t v = 0; v < voices; v++)
+//      mix += os[v].read();
+//  
+//    return mul_T1U8S<amp>(mix);
   }
 
   inline sample_type read() {
-   phacc += phincr + detune_phincr << octave;
+   phacc += (phincr << octave) + detune_phincr;
    
    switch (wave) {
     case 0:
@@ -96,6 +105,4 @@ class Oscillator {
 typedef Oscillator<int8_t> osc_type;
 
 osc_type oscs[VOICES];
-
-
 

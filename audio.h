@@ -7,7 +7,12 @@
 volatile uint32_t stime = 0;
 
 inline uint8_t generate_sample() {
-  return osc_type::traits::to_uint8_t(osc_type::play_mixed<VOICES>(oscs));
+  return osc_type::traits::to_uint8_t(    
+    mul_T1U8S<8>(
+      osc_type::play_mixed<VOICES>(oscs),
+      denv.read() >> 8
+    )
+  );
 }
 
 ISR(TIMER0_COMPA_vect) {
@@ -41,9 +46,14 @@ void setup_timers() {
 
   while (! (PLLCSR & _BV(PLOCK)));
 
-  TCCR0A = _BV(WGM01); // 50khz
-  TCCR0B = _BV(CS01) | _BV(CS00);
-  OCR0A = 4;
+//  TCCR0A = _BV(WGM01); // 50khz
+//  TCCR0B = _BV(CS01) | _BV(CS00);
+//  OCR0A = 4;
+
+  TCCR0A = _BV(WGM01); // 40khz
+  TCCR0B = _BV(CS01);
+  OCR0A = 49;
+
   TIMSK = _BV(OCIE0A);
 
   TCCR1 = _BV(CS10) | _BV(COM1A0) | _BV(PWM1A); // 250khz PWM
