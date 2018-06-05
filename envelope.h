@@ -41,18 +41,16 @@ class ADEnvelope  {
     acc_type decay_incr;
     
     ADEnvelope() : 
-      attack_incr(UINT32_MAX),
-      decay_incr(1),
+      attack_incr(maximum),
+      decay_incr(hz_phincr),
       attack(0),
-      decay(0) {;
-      decay = UINT32_MAX;
+      decay(0) {
     }
 
     inline void trigger() {
-      attack = UINT32_MAX;
-      decay = UINT32_MAX;
+      attack = maximum - decay;
+      decay = maximum;
     }
-
 
     inline acc_type read() {
       if (attack > 0) {
@@ -67,7 +65,10 @@ class ADEnvelope  {
     }
     
     inline void set_d_time (uint8_t seconds_q4n4) {
-      set_d_hz(seconds_q4n4 == 1 ? 255 : (256 / seconds_q4n4));
+      if (seconds_q4n4 == 0)
+        decay_incr = maximum;
+      else
+        set_d_hz(seconds_q4n4 == 1 ? 255 : (256 / seconds_q4n4));
     }
 
     inline void set_d_hz (uint8_t hz_q4n4) {
@@ -76,7 +77,10 @@ class ADEnvelope  {
 
     /* FIX THIS */
     inline void set_a_time (uint16_t seconds_q2n14) {
-      set_a_hz(65536/seconds_q2n14);
+      if (seconds_q2n14 == 0)
+        attack_incr = maximum;
+      else
+        set_a_hz(seconds_q2n14 == 1 ? 65535 : (65536/seconds_q2n14));
     }
 
     inline void set_a_hz (uint16_t hz_q14n2) {

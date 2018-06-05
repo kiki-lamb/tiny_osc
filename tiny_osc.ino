@@ -33,7 +33,7 @@ void setup() {
   oscs[1].wave = 1;
   oscs[2].wave = 1;
 
-  denv.set_a_hz (UINT16_MAX);
+  denv.set_a_time(0);
   denv.set_d_time(0b00001000);
   
   setup_audio(); 
@@ -46,7 +46,7 @@ uint8_t seq[] = {
 };
 
 void soft_timer() {
-  if (stime < (SRATE))
+  if (stime < (SRATE / 2))
     return;
 
   denv.trigger();
