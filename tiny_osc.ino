@@ -6,7 +6,7 @@
 
 using namespace lambOS;
 
-#define VOICES 3 // 3 will cause buffer underruns/frequency loss if compiled without -O3.
+#define VOICES 2 // 3 will cause buffer underruns/frequency loss if compiled without -O3.
 
 #include "math.h"
 #include "osc.h"
@@ -25,68 +25,44 @@ void setup() {
     oscs[ix].wave = osc_type::wf_saw; //silence;
     oscs[ix].set_hz(f, 0);
   }
-    oscs[1].set_detune_hz(0b00001001);
-    oscs[2].set_detune_hz(0b00010101);
-    oscs[2].wave = 3;
-    oscs[2].octave = 2;
+  
+  oscs[1].set_detune_hz(0b00100000);
+  oscs[2].set_detune_hz(0b00110000);
+  
+  oscs[0].wave = 1;
+  oscs[1].wave = 1;
+  oscs[2].wave = 1;
+
+  denv.set_a_time(0b00000010);
+  denv.set_d_time(0b00010000);
+  
   setup_audio(); 
   setup_timers();
 }
 
- uint8_t seq[] = {
- 0,
- 12,
- 24,
- 0,
- 12,
- 24,
- 0,
- 12,
-
- 24,
- 0,
- 12,
- 24,
- 0,
- 12,
- 24,
- 0,
- 
- 27,
- 3,
- 15,
- 27,
- 3,
- 15,
- 27,
- 3,
-
- 1,
- 13,
- 25,
- 1,  
- 13,
- 25,
- 1,  
- 13,
+uint8_t seq[] = {
+12, 13, 10, 9, 
+12, 13, 5, 4 
 };
 
 void soft_timer() {
-  if (stime < 65535) 
+  if (stime < (SRATE / 4)) // >> 2)) 
     return;
 
   denv.trigger();
-      
+  
   stime = 0;
   
-  static uint8_t ix = 0;
-  uint8_t note = seq[ix];
+  static uint8_t iix = 0;
+  uint8_t note = seq[iix >> 4];
 
-  for (uint16_t ix = 0, f = 36 + note; ix < VOICES; ix ++) 
-    oscs[ix].set_note(f);
+  for (uint16_t ix = 0, f = 18 + note; ix < VOICES; ix ++) {
+    oscs[ix].set_note(f + ((iix % 16 % 3) * 12));
+    oscs[ix].phacc = 1 << 31;
+  }
   
-  ix ++;
-  ix %= 32;
+  iix ++;
+  iix %= 128;
 }
 
 void loop() {

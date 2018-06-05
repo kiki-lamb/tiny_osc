@@ -7,12 +7,14 @@
 volatile uint32_t stime = 0;
 
 inline uint8_t generate_sample() {
-  return osc_type::traits::to_uint8_t(    
-    mul_T1U8S<8>(
-      osc_type::play_mixed<VOICES>(oscs),
-      denv.read() >> 8
-    )
+  //return denv.read() >> 24; 
+  
+  int8_t input = mul_T1U8S<8>(
+       osc_type::play_mixed<VOICES>(oscs),
+       denv.read() >> 24
   );
+
+  return osc_type::traits::to_uint8_t(input);
 }
 
 ISR(TIMER0_COMPA_vect) {

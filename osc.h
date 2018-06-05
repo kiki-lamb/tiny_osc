@@ -1,4 +1,4 @@
-#define SRATE 50000
+#define SRATE 40000
 
 #include "sample_type_traits.h"
 #include "dsp.h"
