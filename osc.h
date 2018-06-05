@@ -38,18 +38,29 @@ class Oscillator {
 
   int8_t octave;
   uint8_t amp;
+  
+  private:
   waveform wave;
+  
+  public:
   uint32_t phacc;
   uint32_t phincr;
   uint32_t detune_phincr;
-
+  uint8_t last_sine_msb;
+  sample_type last_sine_sample;
+ 
   Oscillator () : 
     amp(255),
     wave(1), 
     octave(0), 
     phacc(rand()), 
     phincr(0), 
-    detune_phincr(0) {}
+    detune_phincr(0),
+    last_sine_msb(0),
+    last_sine_sample(0)
+    {
+      set_wave(wave);
+    }
 
   inline void set_hz(uint16_t hz_q16n0, uint8_t hz_q0n8) {
     phincr = (hz_phincr * hz_q16n0) + (hz_phincr * hz_q0n8 >> 8);
@@ -83,22 +94,49 @@ class Oscillator {
 //    return mul_T1U8S<amp>(mix);
   }
 
-  inline sample_type read() {
+  inline sample_type render_silence() { 
+    return traits::silence;
+  }
+  
+  inline sample_type render_saw() {
+    return (phacc >> 24) + traits::minimum;
+  }
+
+  inline sample_type render_square() {
+      return phacc < (1 << 31) ? traits::maximum : traits::minimum;  
+  }
+
+  inline sample_type render_sine() {
+    uint8_t tmp = phacc >> 24;
+    
+    if (tmp != last_sine_msb) {
+      last_sine_msb = tmp;
+      last_sine_sample = pgm_read_byte(traits::sine_table+last_sine_msb);
+    }
+
+    return last_sine_sample;
+  }
+      
+  inline void set_wave(waveform wf) {
+    wave = wf;
+   }
+ 
+ inline sample_type read() {
    phacc += phincr;
-   
+
    switch (wave) {
     case 0:
-      return traits::silence;
+      return render_silence();
     case 1:
-      return (phacc >> 24) + traits::minimum;
+      return render_saw();
     case 2:
-      return phacc < (1 << 31) ? traits::maximum : traits::minimum;
-    case 3: {
-      return pgm_read_byte(traits::sine_table+(phacc >> 24));
+      return render_square();
+    case 3: 
+      return render_sine();
     }
-   }
   }
 };
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

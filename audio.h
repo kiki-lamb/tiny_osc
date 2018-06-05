@@ -13,12 +13,12 @@ inline uint8_t generate_sample() {
   if (! (ix++ & 0b11111))
     amp = denv.read() >> 24;
 
-  int8_t input = mul_T1U8S<8>(
+  return osc_type::traits::to_uint8_t(
+    mul_T1U8S<8>(
        osc_type::play_mixed<VOICES>(oscs),
        amp
+    )
   );
-
-  return osc_type::traits::to_uint8_t(input);
 }
 
 ISR(TIMER0_COMPA_vect) {
@@ -56,9 +56,9 @@ void setup_timers() {
 //  TCCR0B = _BV(CS01) | _BV(CS00);
 //  OCR0A = 4;
 
-  TCCR0A = _BV(WGM01); // 40khz
+  TCCR0A = _BV(WGM01);
   TCCR0B = _BV(CS01);
-  OCR0A = 49;
+  OCR0A = 60; // 33.33 khz 
 
   TIMSK = _BV(OCIE0A);
 

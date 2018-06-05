@@ -35,7 +35,7 @@ inline void command(uint8_t cmd_byte, uint8_t param) {
       switch (cmd) {
         case CMD_CONFIG_OSC:
           oscs[ix].amp = (param & CMD_CONFIG_OSC__VOL) >> 4; 
-          oscs[ix].wave = (param & CMD_CONFIG_OSC__WF) >> 2;
+          oscs[ix].set_wave( (param & CMD_CONFIG_OSC__WF) >> 2 );
           oscs[ix].octave = (param & CMD_CONFIG_OSC__OC);
            break;
         case CMD_SET_NOTE:
