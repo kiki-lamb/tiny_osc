@@ -21,7 +21,10 @@ class DEnvelope  {
     }
     
     inline void set_d_time (uint8_t seconds_q4n4) {
-      set_d_hz(256 / seconds_q4n4);
+      if (seconds_q4n4 == 0)
+        decay_incr = maximum;
+      else
+        set_d_hz(seconds_q4n4 == 1 ? 255 : (256 / seconds_q4n4));
     }
 
     inline void set_d_hz (uint8_t hz_q4n4) {
@@ -75,7 +78,6 @@ class ADEnvelope  {
       decay_incr = hz_phincr * hz_q4n4 >> 4;      
     }
 
-    /* FIX THIS */
     inline void set_a_time (uint16_t seconds_q2n14) {
       if (seconds_q2n14 == 0)
         attack_incr = maximum;
