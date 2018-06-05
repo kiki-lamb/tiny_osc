@@ -12,11 +12,11 @@ class DEnvelope  {
       decay(0) {
     }
 
-    inline void trigger() {
+    virtual inline void trigger() {
       decay = maximum;
     }
 
-    inline acc_type read() {
+    virtual inline acc_type read() {
       return decay = (decay < decay_incr) ? 0 : decay - decay_incr;
     }
     
@@ -30,54 +30,35 @@ class DEnvelope  {
     inline void set_d_hz (uint8_t hz_q4n4) {
       decay_incr = hz_phincr * hz_q4n4 >> 4;      
     }
+
+    virtual ~DEnvelope() {}
 };
 
-class ADEnvelope  {
+class ADEnvelope : public DEnvelope {
   public:
-    typedef uint32_t acc_type;
-    static const acc_type maximum = ((acc_type)0) - 1;
-    static const acc_type hz_phincr = maximum / SRATE;
-
     acc_type attack;
     acc_type attack_incr;
-    acc_type decay;
-    acc_type decay_incr;
     
+    virtual ~ADEnvelope() {}
+
     ADEnvelope() : 
       attack_incr(maximum),
-      decay_incr(hz_phincr),
-      attack(0),
-      decay(0) {
-    }
+      attack(0){}
 
-    inline void trigger() {
+    virtual inline void trigger() {
       attack = maximum - decay;
-      decay = maximum;
+      DEnvelope::trigger();
     }
 
-    inline acc_type read() {
+    virtual inline acc_type read() {
       if (attack > 0) {
         attack = attack < attack_incr ? 0 : attack - attack_incr;
         return ~attack;
       }
-      else if (decay > 0) {
-        return decay = (decay < decay_incr) ? 0 : decay - decay_incr;
-      }
-      
-      return 0;
+      else 
+        return DEnvelope::read();
     }
     
-    inline void set_d_time (uint8_t seconds_q4n4) {
-      if (seconds_q4n4 == 0)
-        decay_incr = maximum;
-      else
-        set_d_hz(seconds_q4n4 == 1 ? 255 : (256 / seconds_q4n4));
-    }
-
-    inline void set_d_hz (uint8_t hz_q4n4) {
-      decay_incr = hz_phincr * hz_q4n4 >> 4;      
-    }
-
     inline void set_a_time (uint16_t seconds_q2n14) {
       if (seconds_q2n14 == 0)
         attack_incr = maximum;
@@ -89,7 +70,6 @@ class ADEnvelope  {
       attack_incr = hz_phincr * hz_q14n2 >> 2;
     }
 };
-
 
 ADEnvelope denv;
 
