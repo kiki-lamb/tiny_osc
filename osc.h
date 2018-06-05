@@ -28,11 +28,11 @@ const uint32_t notes[] PROGMEM  = {
   813620672, 862001088, 1536518824,
 };
 
-template <typename sample_type>
+template <typename sample_type, uint32_t srate>
 class Oscillator { 
   public:
   typedef sample_type_traits<sample_type> traits;
-  static const uint32_t hz_phincr = UINT32_MAX/SRATE;
+  static const uint32_t hz_phincr = UINT32_MAX/srate;
     
   enum waveform { wf_silence, wf_saw, wf_square, wf_sine }; 
 
@@ -62,7 +62,7 @@ class Oscillator {
       set_wave(wave);
     }
 
-  inline void set_hz(uint16_t hz_q16n0, uint8_t hz_q0n8) {
+  inline void set_hz(uint16_t hz_q16n0, uint8_t hz_q0n8 = 0) {
     phincr = (hz_phincr * hz_q16n0) + (hz_phincr * hz_q0n8 >> 8);
   }
 
@@ -121,7 +121,7 @@ class Oscillator {
     wave = wf;
    }
  
- inline sample_type read() {
+  inline sample_type read() {
    phacc += phincr;
 
    switch (wave) {
@@ -140,7 +140,9 @@ class Oscillator {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef Oscillator<int8_t> osc_type;
+typedef Oscillator<int8_t, SRATE> osc_type;
+typedef Oscillator<int8_t, SRATE / 32> lfo_type;
 
 osc_type oscs[VOICES];
+lfo_type lfo;
 

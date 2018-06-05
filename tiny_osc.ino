@@ -14,6 +14,7 @@ using namespace lambOS;
 #include "i2c.h"
 #include "command.h"
 #include "envelope.h"
+#include "lpf.h"
 #include "audio.h"
 #include "led.h"
 
@@ -21,32 +22,41 @@ void setup() {
   setup_led();  
   setup_wire();
 
+  lfo.set_hz(8, 0b00000000);
+  lfo.set_wave(3);
+ 
   oscs[0].set_detune_hz(0b00000000);  
-  oscs[1].set_detune_hz(0b00100000);
-  oscs[2].set_detune_hz(0b01000000);
+  oscs[1].set_detune_hz(0b00001100);
+  oscs[2].set_detune_hz(0b00011000);
   
-  oscs[0].octave = 0;
+  oscs[0].octave = 1;
   oscs[1].octave = 1;
-  oscs[2].octave = 2;
+  oscs[2].octave = 1;
   
-  oscs[0].set_wave(3);
-  oscs[1].set_wave(3);
-  oscs[2].set_wave(3);
+  oscs[0].set_wave(1);
+  oscs[1].set_wave(1);
+  oscs[2].set_wave(1);
 
-  denv.set_a_time(128);
-  denv.set_d_time(0b00000100);
+  oscs[0].set_note(48);
+  oscs[1].set_note(48);
+  oscs[2].set_note(48);
+
+  denv.set_a_time(512);
+  denv.set_d_time(0b00001000);
   
   setup_audio(); 
   setup_timers();
 }
 
 uint8_t seq[] = {
-  18, 17, 14, 15, 
-  18, 17, 14, 12 
+  12, 12, 24, 24, 
+  15, 27, 12, 24, 
+  8,  8,  20, 24,
+  7, 7, 19, 24  
 };
 
 void soft_timer() {
-  if (stime < (SRATE / 5))
+  if (stime < (SRATE / 4))
     return;
 
   stime = 0;
@@ -54,15 +64,15 @@ void soft_timer() {
   denv.trigger();
   
   static uint8_t iix = 0;
-  uint8_t note = seq[iix >> 4];
+  uint8_t note = seq[iix];
 
-  for (uint16_t ix = 0, f = 14 + note; ix < VOICES; ix ++) {
-    oscs[ix].set_note(f + ((iix % 8 % 3)) * 12);
-    oscs[ix].phacc = 1 << 31;
+  for (uint16_t ix = 0, f = 24 + note; ix < VOICES; ix ++) {
+    oscs[ix].set_note(f);
+    oscs[ix].phacc = 1 << 30;
   }
   
   iix ++;
-  iix %= 128;
+  iix %= 16;
 }
 
 void loop() {
@@ -70,5 +80,3 @@ void loop() {
   process_commands();
   soft_timer();
 }
-
-

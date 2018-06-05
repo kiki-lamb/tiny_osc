@@ -7,17 +7,21 @@
 volatile uint32_t stime = 0;
 
 inline uint8_t generate_sample() {
-  static uint8_t amp = 0;
   static uint8_t ix = 0;
+  static uint8_t last_env = 0;
+  static uint8_t last_lfo = 0;
   
-  if (! (ix++ & 0b11111))
-    amp = denv.read() >> 24;
+  if (! (ix++ & 0b11111)) {
+    last_env = denv.read() >> 24;
+    last_lfo = lfo_type::traits::to_uint8_t(lfo.read());
+    last_env = last_env * (128 | (last_lfo >> 1)) >> 8;
+  }
 
   return osc_type::traits::to_uint8_t(
     mul_T1U8S<8>(
-       osc_type::play_mixed<VOICES>(oscs),
-       amp
-    )
+        lpf.read ( osc_type::play_mixed<VOICES>(oscs), last_lfo ),
+        last_env // amp
+      )
   );
 }
 
