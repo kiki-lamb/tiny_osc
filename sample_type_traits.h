@@ -26,7 +26,6 @@ template <> class sample_type_traits<int8_t> {
 
 const int8_t * sample_type_traits<int8_t>::sine_table = lambOS::Tables::sin256_int8_data;
 
-
 template <> class sample_type_traits<uint8_t> {
   public:
     typedef uint8_t value_type;

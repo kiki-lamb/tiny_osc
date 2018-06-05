@@ -7,11 +7,15 @@
 volatile uint32_t stime = 0;
 
 inline uint8_t generate_sample() {
-  //return denv.read() >> 24; 
+  static uint8_t amp = 0;
+  static uint8_t ix = 0;
   
+  if (! (ix++ & 0b11111))
+    amp = denv.read() >> 24;
+
   int8_t input = mul_T1U8S<8>(
        osc_type::play_mixed<VOICES>(oscs),
-       denv.read() >> 24
+       amp
   );
 
   return osc_type::traits::to_uint8_t(input);

@@ -56,7 +56,7 @@ class Oscillator {
   }
 
   inline void set_note(uint8_t note) {
-    phincr = pgm_read_dword(notes + note); 
+    phincr = (pgm_read_dword(notes + note) << octave) + detune_phincr; 
   }  
 
   inline void set_detune_hz(uint16_t hz_q4n4) {
@@ -84,7 +84,7 @@ class Oscillator {
   }
 
   inline sample_type read() {
-   phacc += (phincr << octave) + detune_phincr;
+   phacc += phincr;
    
    switch (wave) {
     case 0:
@@ -92,7 +92,7 @@ class Oscillator {
     case 1:
       return (phacc >> 24) + traits::minimum;
     case 2:
-      return phacc > (1L << 31) ? traits::maximum : traits::minimum;
+      return phacc < (1 << 31) ? traits::maximum : traits::minimum;
     case 3: {
       return pgm_read_byte(traits::sine_table+(phacc >> 24));
     }

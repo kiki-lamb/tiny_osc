@@ -1,8 +1,9 @@
-class DEnvelope  {
+template <uint32_t srate>
+class DEnvelope {
   public:
     typedef uint32_t acc_type;
     static const acc_type maximum = ((acc_type)0) - 1;
-    static const acc_type hz_phincr = maximum / SRATE;
+    static const acc_type hz_phincr = maximum / srate;
 
     acc_type decay;
     acc_type decay_incr;
@@ -34,42 +35,43 @@ class DEnvelope  {
     virtual ~DEnvelope() {}
 };
 
-class ADEnvelope : public DEnvelope {
+template <uint32_t srate>
+class ADEnvelope : public DEnvelope<srate> {
   public:
-    acc_type attack;
-    acc_type attack_incr;
+    typename DEnvelope<srate>::acc_type attack;
+    typename DEnvelope<srate>::acc_type attack_incr;
     
     virtual ~ADEnvelope() {}
 
     ADEnvelope() : 
-      attack_incr(maximum),
+      attack_incr(DEnvelope<srate>::maximum),
       attack(0){}
 
     virtual inline void trigger() {
-      attack = maximum - decay;
-      DEnvelope::trigger();
+      attack = DEnvelope<srate>::maximum - DEnvelope<srate>::decay;
+      DEnvelope<srate>::trigger();
     }
 
-    virtual inline acc_type read() {
+    virtual inline typename DEnvelope<srate>::acc_type read() {
       if (attack > 0) {
         attack = attack < attack_incr ? 0 : attack - attack_incr;
         return ~attack;
       }
       else 
-        return DEnvelope::read();
+        return DEnvelope<srate>::read();
     }
     
     inline void set_a_time (uint16_t seconds_q2n14) {
       if (seconds_q2n14 == 0)
-        attack_incr = maximum;
+        attack_incr = DEnvelope<srate>::maximum;
       else
         set_a_hz(seconds_q2n14 == 1 ? 65535 : (65536/seconds_q2n14));
     }
 
     inline void set_a_hz (uint16_t hz_q14n2) {
-      attack_incr = hz_phincr * hz_q14n2 >> 2;
+      attack_incr = DEnvelope<srate>::hz_phincr * hz_q14n2 >> 2;
     }
 };
 
-ADEnvelope denv;
+ADEnvelope<SRATE / 32> denv;
 
