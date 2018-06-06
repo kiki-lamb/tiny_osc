@@ -6,24 +6,22 @@
 
 using namespace lambOS;
 
-
 #include "math.h"
 #include "sample_type_traits.h"
 #include "interfaces.h"
-#include "dsp.h"
 #include "osc.h"
 #include "envelope.h"
+#include "dsp.h"
 #include "buff.h"
-#include "i2c.h"
-#include "command.h"
 #include "lpf.h"
 #include "audio.h"
+#include "i2c.h"
+#include "command.h"
 #include "led.h"
 
 void setup() {
   setup_led();  
   setup_wire();
-
   setup_audio(); 
   setup_timers();
 }
@@ -32,8 +30,7 @@ uint8_t seq[] = "ffrriufrbbnraamq";
 //  12, 12, 24, 24, 
 //  15, 27, 12, 24, 
 //  8,  8,  20, 24,
-//  7, 7, 19, 24  
-//};
+//  7, 7, 19, 24 };
 
 void soft_timer() {
   if (stime < (SRATE / 4))

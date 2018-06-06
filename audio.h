@@ -6,6 +6,8 @@
 
 volatile uint32_t stime = 0;
 
+uint8_t generate_audio();
+
 ISR(TIMER0_COMPA_vect) {
   stime++;
 #ifdef BUFFER_AUDIO
@@ -18,7 +20,6 @@ ISR(TIMER0_COMPA_vect) {
 #endif
 }
 
-uint8_t generate_audio();
 
 inline bool fill_buffer() {
 #ifdef BUFFER_AUDIO
@@ -53,7 +54,13 @@ void setup_timers() {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Attenuator att;
+typedef Oscillator<SRATE, int8_t> osc_type;
+typedef Oscillator<SRATE / 32, int8_t> lfo_type;
+
+osc_type oscs[VOICES];
+lfo_type lfo;
+
+//Attenuator att;
 
 inline uint8_t generate_audio() {
   static uint8_t ix = 0;
@@ -66,7 +73,7 @@ inline uint8_t generate_audio() {
     last_env = last_env * (128 | (last_lfo >> 1)) >> 8;
   }
 
-  return osc_type::traits::to_uint8_t(
+  return osc_type::traits::to_uint8_t( 
     mul_T1U8S<8>(
         osc_type::play_mixed<VOICES>(oscs),
         //att.read(), //oscs[0].read(),
@@ -76,32 +83,32 @@ inline uint8_t generate_audio() {
 }
 
 void setup_audio() {
-#ifdef BUFFER_AUDIO
-  while (fill_buffer());
-#endif
-
   lfo.set_hz(8, 0b00000000);
   lfo.set_wave(3);
  
   oscs[0].set_detune_hz(0b00000000);  
   oscs[1].set_detune_hz(0b00001100);
-  oscs[2].set_detune_hz(0b00011000);
+  //oscs[2].set_detune_hz(0b00011000);
   
-  oscs[0].octave = 0;
-  oscs[1].octave = 1;
-  oscs[2].octave = 2;
+  oscs[0].octave = osc_type::wf_saw;
+  oscs[1].octave = osc_type::wf_saw;
+  //oscs[2].octave = osc_type::wf_saw;
   
   oscs[0].set_wave(1);
   oscs[1].set_wave(1);
-  oscs[2].set_wave(1);
+  //oscs[2].set_wave(1);
 
   oscs[0].set_note(48);
   oscs[1].set_note(48);
-  oscs[2].set_note(48);
+  //oscs[2].set_note(48);
 
   env.set_a_time(1024);
   env.set_d_time(0b00001000);
   
 //  att.connect(&(oscs[0]));
+
+#ifdef BUFFER_AUDIO
+  while (fill_buffer());
+#endif
 }
 

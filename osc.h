@@ -1,10 +1,6 @@
 #define SRATE 40000
 #define VOICES 2 // 3 // 3 will cause buffer underruns/frequency loss if compiled without -O3.
 
-#ifndef __AVR__
-#define pgm_read_dword(x) (*(x))
-#define pgm_read_byte(x) (*(x))
-#endif
 const uint32_t notes[] 
 #ifdef __AVR__
 PROGMEM 
@@ -143,14 +139,3 @@ class Oscillator : public SampleProvider<sample_type> {
     }
   }
 };
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-typedef Oscillator<SRATE, int8_t> osc_type;
-typedef Oscillator<SRATE / 32, int8_t> lfo_type;
-
-osc_type oscs[VOICES];
-lfo_type lfo;
-
