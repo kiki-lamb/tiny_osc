@@ -1,4 +1,6 @@
 template <typename sample_t> class sample_type_traits {
+  public:
+  typedef sample_t value_type;
 //  public:
 //    typedef sample_t value_type;
 //    static const int16_t maximum;
@@ -7,6 +9,7 @@ template <typename sample_t> class sample_type_traits {
 //    static const int16_t bias_to_signed;
 //    static const int16_t bias_to_unsigned;
 //    static const value_type * sine_table;
+      static inline value_type id(value_type x) { return x; };
 };
 
 template <> class sample_type_traits<int8_t> {

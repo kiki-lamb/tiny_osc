@@ -2,10 +2,10 @@
 template <typename output_type_> 
 class SampleProvider { 
   public:
-    typedef output_type_ value_type;
-    typedef sample_type_traits<value_type> traits;
+    typedef output_type_ output_type;
+    typedef sample_type_traits<output_type> traits;
     virtual ~SampleProvider() {};
-    virtual value_type read() = 0;
+    virtual output_type read() = 0;
 };
 
 template <typename output_type_>
@@ -20,34 +20,33 @@ class CustomSampleProvider : public SampleProvider<output_type_> {
   }
 };
 
-template <typename output_type_> 
-class SampleReceiver : public SampleProvider<output_type_> { 
+template <typename input_type_, typename output_type_ = input_type_ > 
+class SampleProcessor : public SampleProvider<output_type_> { 
   public:
-    typedef output_type_ value_type;
+    typedef input_type_ input_type;
+    typedef output_type_ output_type;
   
-  private:
-    SampleProvider<value_type> * source;
-  
-  public:
-    typedef sample_type_traits<value_type> traits;
-    virtual ~SampleReceiver() {};
-    void connect(SampleProvider<value_type> * source_ = NULL) {
+    SampleProvider<output_type> * source;
+      
+    virtual ~SampleProcessor() {};
+
+    void connect(SampleProvider<input_type> * source_ = NULL) {
       source = source_;
     }
-    virtual value_type read() {
+    virtual output_type read() {
       return process(source->read());
     }
-    virtual value_type process(value_type) = 0;
+    virtual output_type process(input_type) = 0;
 };
 
-template <typename output_type_> 
-class CustomSampleReceiver : public SampleReceiver<output_type_> {
+template <typename input_type_, typename output_type_ = input_type_ > 
+class CustomSampleProcessor : public SampleProcessor<input_type_, output_type_> {
   public:
-  typedef output_type_ (*func_type)(output_type_);
+  typedef output_type_ (*func_type)(input_type_);
   func_type func;
-  CustomSampleReceiver(func_type f) : func(f) {};
-  virtual ~CustomSampleReceiver() {};
-  virtual output_type_ process(output_type_ v) {
+  CustomSampleProcessor(func_type f) : func(f) {};
+  virtual ~CustomSampleProcessor() {};
+  virtual output_type_ process(input_type_ v) {
     return (*func)(v);
   }
 };
