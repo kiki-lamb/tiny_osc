@@ -6,28 +6,6 @@
 
 volatile uint32_t stime = 0;
 
-Attenuator att;
-
-inline uint8_t generate_sample() {
-  static uint8_t ix = 0;
-  static uint8_t last_env = 0;
-  static uint8_t last_lfo = 0;
-  
-  if (! (ix++ & 0b11111)) {
-    last_env = env.read() >> 24;
-    last_lfo = lfo_type::traits::to_uint8_t(lfo.read());
-    last_env = last_env * (128 | (last_lfo >> 1)) >> 8;
-  }
-
-  return osc_type::traits::to_uint8_t(
-    mul_T1U8S<8>(
-        //osc_type::play_mixed<VOICES>(oscs),
-        att.read(), //oscs[0].read(),
-        last_env // amp
-      )
-  );
-}
-
 ISR(TIMER0_COMPA_vect) {
   stime++;
 #ifdef BUFFER_AUDIO
@@ -36,14 +14,16 @@ ISR(TIMER0_COMPA_vect) {
   else 
     OCR1A = buff256_read(abuff);
 #else
-  OCR1A =  generate_sample();
+  OCR1A =  generate_audio();
 #endif
 }
 
-inline bool generate_audio() {
+uint8_t generate_audio();
+
+inline bool fill_buffer() {
 #ifdef BUFFER_AUDIO
   if (buff256_writable(abuff)) {
-    buff256_write(abuff, generate_sample());
+    buff256_write(abuff, generate_audio());
     return true;
   }
   return false;
@@ -71,9 +51,33 @@ void setup_timers() {
   sei();
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Attenuator att;
+
+inline uint8_t generate_audio() {
+  static uint8_t ix = 0;
+  static uint8_t last_env = 0;
+  static uint8_t last_lfo = 0;
+  
+  if (! (ix++ & 0b11111)) {
+    last_env = env.read() >> 24;
+    last_lfo = lfo_type::traits::to_uint8_t(lfo.read());
+    last_env = last_env * (128 | (last_lfo >> 1)) >> 8;
+  }
+
+  return osc_type::traits::to_uint8_t(
+    mul_T1U8S<8>(
+        osc_type::play_mixed<VOICES>(oscs),
+        //att.read(), //oscs[0].read(),
+        last_env // amp
+      )
+  );
+}
+
 void setup_audio() {
 #ifdef BUFFER_AUDIO
-  while (generate_audio());
+  while (fill_buffer());
 #endif
 
   lfo.set_hz(8, 0b00000000);
@@ -98,6 +102,6 @@ void setup_audio() {
   env.set_a_time(1024);
   env.set_d_time(0b00001000);
   
-  att.connect(&oscs[0]);
+//  att.connect(&(oscs[0]));
 }
 
