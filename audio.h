@@ -6,36 +6,22 @@
 
 volatile uint32_t stime = 0;
 
-int8_t lastOutput;
-int8_t lastOutput2;
-int8_t lastOutput3;
-
-int8_t doLPF(int8_t input) {
-    int8_t distanceToGo = input - lastOutput;
-    lastOutput += distanceToGo >> 1; // Lower / higher number here will lower / raise the cutoff frequency
-    distanceToGo = lastOutput - lastOutput2;
-    lastOutput2 += distanceToGo >> 1; 
-    distanceToGo = lastOutput2 - lastOutput3;
-    lastOutput3 += distanceToGo >> 1; 
-    return lastOutput3;
-}
-
 inline uint8_t generate_sample() {
   static uint8_t ix = 0;
   static uint8_t last_env = 0;
   static uint8_t last_lfo = 0;
   
   if (! (ix++ & 0b11111)) {
-    last_env = denv.read() >> 24;
+    last_env = env.read() >> 24;
     last_lfo = lfo_type::traits::to_uint8_t(lfo.read());
     last_env = last_env * (128 | (last_lfo >> 1)) >> 8;
   }
 
   return osc_type::traits::to_uint8_t(
-    doLPF(mul_T1U8S<8>(
-        lpf.read ( osc_type::play_mixed<VOICES>(oscs), last_lfo ),
+    mul_T1U8S<8>(
+        osc_type::play_mixed<VOICES>(oscs),
         last_env // amp
-      ))
+      )
   );
 }
 
@@ -69,10 +55,6 @@ void setup_timers() {
   PLLCSR |= _BV(PLLE) | _BV(PCKE);
 
   while (! (PLLCSR & _BV(PLOCK)));
-
-//  TCCR0A = _BV(WGM01); // 50khz
-//  TCCR0B = _BV(CS01) | _BV(CS00);
-//  OCR0A = 4;
 
   TCCR0A = _BV(WGM01);
   TCCR0B = _BV(CS01);

@@ -1,7 +1,7 @@
-template <uint32_t srate>
+template <uint32_t srate, typename a_type = uint32_t > // a_type should be an unsigned integer type.
 class DEnvelope {
   public:
-    typedef uint32_t acc_type;
+    typedef a_type acc_type;
     static const acc_type maximum = ((acc_type)0) - 1;
     static const acc_type hz_phincr = maximum / srate;
 
@@ -35,8 +35,8 @@ class DEnvelope {
     virtual ~DEnvelope() {}
 };
 
-template <uint32_t srate>
-class ADEnvelope : public DEnvelope<srate> {
+template <uint32_t srate, typename a_type = uint32_t >
+class ADEnvelope : public DEnvelope<srate, a_type> {
   public:
     typename DEnvelope<srate>::acc_type attack;
     typename DEnvelope<srate>::acc_type attack_incr;
@@ -44,34 +44,34 @@ class ADEnvelope : public DEnvelope<srate> {
     virtual ~ADEnvelope() {}
 
     ADEnvelope() : 
-      attack_incr(DEnvelope<srate>::maximum),
+      attack_incr(DEnvelope<srate, a_type>::maximum),
       attack(0){}
 
     virtual inline void trigger() {
-      attack = DEnvelope<srate>::maximum - DEnvelope<srate>::decay;
+      attack = DEnvelope<srate, a_type>::maximum - DEnvelope<srate>::decay;
       DEnvelope<srate>::trigger();
     }
 
-    virtual inline typename DEnvelope<srate>::acc_type read() {
+    virtual inline typename DEnvelope<srate, a_type>::acc_type read() {
       if (attack > 0) {
         attack = attack < attack_incr ? 0 : attack - attack_incr;
         return ~attack;
       }
       else 
-        return DEnvelope<srate>::read();
+        return DEnvelope<srate, a_type>::read();
     }
     
     inline void set_a_time (uint16_t seconds_q2n14) {
       if (seconds_q2n14 == 0)
-        attack_incr = DEnvelope<srate>::maximum;
+        attack_incr = DEnvelope<srate, a_type>::maximum;
       else
         set_a_hz(seconds_q2n14 == 1 ? 65535 : (65536/seconds_q2n14));
     }
 
     inline void set_a_hz (uint16_t hz_q14n2) {
-      attack_incr = DEnvelope<srate>::hz_phincr * hz_q14n2 >> 2;
+      attack_incr = DEnvelope<srate, a_type>::hz_phincr * hz_q14n2 >> 2;
     }
 };
 
-ADEnvelope<SRATE / 32> denv;
+ADEnvelope<SRATE / 32> env;
 

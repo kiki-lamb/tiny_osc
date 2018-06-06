@@ -22,7 +22,7 @@ void setup() {
   setup_led();  
   setup_wire();
 
-  lfo.set_hz(8, 0b00000000);
+  lfo.set_hz(10, 0b00000000);
   lfo.set_wave(3);
  
   oscs[0].set_detune_hz(0b00000000);  
@@ -30,8 +30,8 @@ void setup() {
   oscs[2].set_detune_hz(0b00011000);
   
   oscs[0].octave = 1;
-  oscs[1].octave = 1;
-  oscs[2].octave = 1;
+  oscs[1].octave = 2;
+  oscs[2].octave = 3;
   
   oscs[0].set_wave(1);
   oscs[1].set_wave(1);
@@ -41,34 +41,35 @@ void setup() {
   oscs[1].set_note(48);
   oscs[2].set_note(48);
 
-  denv.set_a_time(512);
-  denv.set_d_time(0b00001000);
+  env.set_a_time(1024);
+  env.set_d_time(0b00000100);
   
   setup_audio(); 
   setup_timers();
 }
 
-uint8_t seq[] = {
-  12, 12, 24, 24, 
-  15, 27, 12, 24, 
-  8,  8,  20, 24,
-  7, 7, 19, 24  
-};
+uint8_t seq[] = "ffrriufrbbnraamq";
+//  12, 12, 24, 24, 
+//  15, 27, 12, 24, 
+//  8,  8,  20, 24,
+//  7, 7, 19, 24  
+//};
 
 void soft_timer() {
-  if (stime < (SRATE / 4))
+  if (stime < (SRATE / 5))
     return;
 
   stime = 0;
 
-  denv.trigger();
-  
   static uint8_t iix = 0;
-  uint8_t note = seq[iix];
+  
+  env.trigger();
 
-  for (uint16_t ix = 0, f = 24 + note; ix < VOICES; ix ++) {
+  uint8_t note = seq[iix >> 0] - 60;
+
+  for (uint16_t ix = 0, f = note; ix < VOICES; ix ++) {
     oscs[ix].set_note(f);
-    oscs[ix].phacc = 1 << 30;
+    //oscs[ix].phacc = 1 << 30;
   }
   
   iix ++;

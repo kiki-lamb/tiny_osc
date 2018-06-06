@@ -28,7 +28,7 @@ const uint32_t notes[] PROGMEM  = {
   813620672, 862001088, 1536518824,
 };
 
-template <typename sample_type, uint32_t srate>
+template <uint32_t srate, typename sample_type>
 class Oscillator { 
   public:
   typedef sample_type_traits<sample_type> traits;
@@ -46,8 +46,8 @@ class Oscillator {
   uint32_t phacc;
   uint32_t phincr;
   uint32_t detune_phincr;
-  uint8_t last_sine_msb;
-  sample_type last_sine_sample;
+  mutable uint8_t last_sine_msb;
+  mutable sample_type last_sine_sample;
  
   Oscillator () : 
     amp(255),
@@ -94,19 +94,19 @@ class Oscillator {
 //    return mul_T1U8S<amp>(mix);
   }
 
-  inline sample_type render_silence() { 
+  inline sample_type render_silence() const { 
     return traits::silence;
   }
   
-  inline sample_type render_saw() {
+  inline sample_type render_saw() const {
     return (phacc >> 24) + traits::minimum;
   }
 
-  inline sample_type render_square() {
-      return phacc < (1 << 31) ? traits::maximum : traits::minimum;  
+  inline sample_type render_square() const {
+    return phacc & (1 << 31) ? traits::maximum : traits::minimum;  
   }
 
-  inline sample_type render_sine() {
+  inline sample_type render_sine() const {
     uint8_t tmp = phacc >> 24;
     
     if (tmp != last_sine_msb) {
@@ -140,8 +140,8 @@ class Oscillator {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef Oscillator<int8_t, SRATE> osc_type;
-typedef Oscillator<int8_t, SRATE / 32> lfo_type;
+typedef Oscillator<SRATE, int8_t> osc_type;
+typedef Oscillator<SRATE / 32, int8_t> lfo_type;
 
 osc_type oscs[VOICES];
 lfo_type lfo;
