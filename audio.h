@@ -21,7 +21,8 @@ inline uint8_t generate_sample() {
 
   return osc_type::traits::to_uint8_t(
     mul_T1U8S<8>(
-        osc_type::play_mixed<VOICES>(oscs),
+        //osc_type::play_mixed<VOICES>(oscs),
+        att.read(), //oscs[0].read(),
         last_env // amp
       )
   );
@@ -74,6 +75,29 @@ void setup_audio() {
 #ifdef BUFFER_AUDIO
   while (generate_audio());
 #endif
+
+  lfo.set_hz(8, 0b00000000);
+  lfo.set_wave(3);
+ 
+  oscs[0].set_detune_hz(0b00000000);  
+  oscs[1].set_detune_hz(0b00001100);
+  oscs[2].set_detune_hz(0b00011000);
+  
+  oscs[0].octave = 0;
+  oscs[1].octave = 1;
+  oscs[2].octave = 2;
+  
+  oscs[0].set_wave(1);
+  oscs[1].set_wave(1);
+  oscs[2].set_wave(1);
+
+  oscs[0].set_note(48);
+  oscs[1].set_note(48);
+  oscs[2].set_note(48);
+
+  env.set_a_time(1024);
+  env.set_d_time(0b00001000);
+  
   att.connect(&oscs[0]);
 }
 

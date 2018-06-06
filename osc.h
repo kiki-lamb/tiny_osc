@@ -1,7 +1,15 @@
 #define SRATE 40000
+#define VOICES 2 // 3 // 3 will cause buffer underruns/frequency loss if compiled without -O3.
 
-
-const uint32_t notes[] PROGMEM  = {
+#ifndef __AVR__
+#define pgm_read_dword(x) (*(x))
+#define pgm_read_byte(x) (*(x))
+#endif
+const uint32_t notes[] 
+#ifdef __AVR__
+PROGMEM 
+#endif
+= {
   561833, 595241, 630636, 668136, 707865, 749957,
   794551, 841798, 891854, 944886, 1001072, 1060599,
   1123666, 1190482, 1261272, 1336271, 1415730, 1499913,
@@ -50,7 +58,7 @@ class Oscillator : public SampleProvider<sample_type> {
  
   Oscillator () : 
     amp(255),
-    wave(1), 
+    wave(wf_saw), 
     octave(0), 
     phacc(rand()), 
     phincr(0), 
@@ -135,6 +143,7 @@ class Oscillator : public SampleProvider<sample_type> {
     }
   }
 };
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
