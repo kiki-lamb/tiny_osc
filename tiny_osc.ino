@@ -6,14 +6,17 @@
 
 using namespace lambOS;
 
-#define VOICES 3 // 3 // 3 will cause buffer underruns/frequency loss if compiled without -O3.
+#define VOICES 2 // 3 // 3 will cause buffer underruns/frequency loss if compiled without -O3.
 
 #include "math.h"
+#include "sample_type_traits.h"
+#include "interfaces.h"
+#include "dsp.h"
 #include "osc.h"
+#include "envelope.h"
 #include "buff.h"
 #include "i2c.h"
 #include "command.h"
-#include "envelope.h"
 #include "lpf.h"
 #include "audio.h"
 #include "led.h"
@@ -29,9 +32,9 @@ void setup() {
   oscs[1].set_detune_hz(0b00001100);
   oscs[2].set_detune_hz(0b00011000);
   
-  oscs[0].octave = 1;
-  oscs[1].octave = 2;
-  oscs[2].octave = 3;
+  oscs[0].octave = 0;
+  oscs[1].octave = 1;
+  oscs[2].octave = 2;
   
   oscs[0].set_wave(1);
   oscs[1].set_wave(1);
@@ -44,7 +47,7 @@ void setup() {
   env.set_a_time(1024);
   env.set_d_time(0b00000100);
   
-  setup_audio(); 
+//  setup_audio(); 
   setup_timers();
 }
 

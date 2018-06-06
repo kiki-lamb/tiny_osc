@@ -1,7 +1,5 @@
 #define SRATE 40000
 
-#include "sample_type_traits.h"
-#include "dsp.h"
 
 const uint32_t notes[] PROGMEM  = {
   561833, 595241, 630636, 668136, 707865, 749957,
@@ -29,13 +27,14 @@ const uint32_t notes[] PROGMEM  = {
 };
 
 template <uint32_t srate, typename sample_type>
-class Oscillator { 
+class Oscillator : public SampleProvider<sample_type> { 
   public:
-  typedef sample_type_traits<sample_type> traits;
   static const uint32_t hz_phincr = UINT32_MAX/srate;
     
   enum waveform { wf_silence, wf_saw, wf_square, wf_sine }; 
 
+  virtual ~Oscillator() {}
+  
   int8_t octave;
   uint8_t amp;
   
@@ -95,15 +94,15 @@ class Oscillator {
   }
 
   inline sample_type render_silence() const { 
-    return traits::silence;
+    return SampleProvider<sample_type>::traits::silence;
   }
   
   inline sample_type render_saw() const {
-    return (phacc >> 24) + traits::minimum;
+    return (phacc >> 24) + SampleProvider<sample_type>::traits::minimum;
   }
 
   inline sample_type render_square() const {
-    return phacc & (1 << 31) ? traits::maximum : traits::minimum;  
+      return phacc & (1 << 31) ? SampleProvider<sample_type>::traits::maximum : SampleProvider<sample_type>::traits::minimum;  
   }
 
   inline sample_type render_sine() const {
@@ -111,7 +110,7 @@ class Oscillator {
     
     if (tmp != last_sine_msb) {
       last_sine_msb = tmp;
-      last_sine_sample = pgm_read_byte(traits::sine_table+last_sine_msb);
+      last_sine_sample = pgm_read_byte(SampleProvider<sample_type>::traits::sine_table+last_sine_msb);
     }
 
     return last_sine_sample;
@@ -121,7 +120,7 @@ class Oscillator {
     wave = wf;
    }
  
-  inline sample_type read() {
+  virtual inline sample_type read() {
    phacc += phincr;
 
    switch (wave) {

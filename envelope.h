@@ -1,5 +1,13 @@
 template <uint32_t srate, typename a_type = uint32_t > // a_type should be an unsigned integer type.
-class DEnvelope {
+class Envelope : public SampleProvider<a_type> {
+  public:
+  virtual ~Envelope() {};
+  virtual void trigger() = 0;
+};
+
+
+template <uint32_t srate, typename a_type = uint32_t > // a_type should be an unsigned integer type.
+class DEnvelope : public Envelope<srate, a_type> {
   public:
     typedef a_type acc_type;
     static const acc_type maximum = ((acc_type)0) - 1;

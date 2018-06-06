@@ -6,6 +6,8 @@
 
 volatile uint32_t stime = 0;
 
+Attenuator att;
+
 inline uint8_t generate_sample() {
   static uint8_t ix = 0;
   static uint8_t last_env = 0;
@@ -72,5 +74,6 @@ void setup_audio() {
 #ifdef BUFFER_AUDIO
   while (generate_audio());
 #endif
+  att.connect(&oscs[0]);
 }
 
