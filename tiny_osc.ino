@@ -6,34 +6,33 @@
 
 using namespace lambOS;
 
+#define VOICES 2 // 3 // 3 will cause buffer underruns/frequency loss if compiled without -O3.
+
 #include "math.h"
 #include "sample_type_traits.h"
 #include "interfaces.h"
+#include "dsp.h"
 #include "osc.h"
 #include "envelope.h"
-#include "dsp.h"
 #include "buff.h"
 #include "lpf.h"
-#include "audio.h"
+#include "voice.h"
 #include "i2c.h"
 #include "command.h"
+#include "audio.h"
 #include "led.h"
 
-void setup() {
-  setup_led();  
-  setup_wire();
-  setup_audio(); 
-  setup_timers();
-}
+////////////////////////////////////////////////////////////////////////////////////
 
 uint8_t seq[] = "ffrriufrbbnraamq";
 //  12, 12, 24, 24, 
 //  15, 27, 12, 24, 
 //  8,  8,  20, 24,
-//  7, 7, 19, 24 };
+//  7, 7, 19, 24  
+//};
 
 void soft_timer() {
-  if (stime < (SRATE / 4))
+  if (stime < (SRATE / 5))
     return;
 
   stime = 0;
@@ -53,8 +52,18 @@ void soft_timer() {
   iix %= 16;
 }
 
+////////////////////////////////////////////////////////////////////////////////////
+
+void setup() {
+  setup_led();  
+  setup_wire();
+  setup_voice();
+  setup_audio(); 
+  setup_timers();
+}
+
 void loop() {
-  while (generate_audio());
+  while (fill_audio_buffer());
   process_commands();
   soft_timer();
 }

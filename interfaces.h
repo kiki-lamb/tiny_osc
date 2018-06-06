@@ -18,26 +18,20 @@ class SampleReceiver : public SampleProvider<output_type_> {
   
   public:
     typedef sample_type_traits<value_type> traits;
-    
     virtual ~SampleReceiver() {};
-    
     void connect(SampleProvider<value_type> * source_ = NULL) {
       source = source_;
     }
-    
     virtual value_type read() {
       return process(source->read());
     }
-  
     virtual value_type process(value_type) = 0;
 };
 
 
 class Attenuator : public SampleReceiver<int8_t> {
   public:
-  
   virtual ~Attenuator() {}
-
   Attenuator() {}
 
   virtual value_type process(value_type value) {

@@ -1,11 +1,11 @@
 #define SRATE 40000
-#define VOICES 2 // 3 // 3 will cause buffer underruns/frequency loss if compiled without -O3.
 
-const uint32_t notes[] 
-#ifdef __AVR__
-PROGMEM 
+#ifndef __AVR__
+#define pgm_read_dword(x) (*(x))
+#define pgm_read_byte(x) (*(x))
 #endif
-= {
+
+const uint32_t notes[] PROGMEM  = {
   561833, 595241, 630636, 668136, 707865, 749957,
   794551, 841798, 891854, 944886, 1001072, 1060599,
   1123666, 1190482, 1261272, 1336271, 1415730, 1499913,
@@ -31,111 +31,111 @@ PROGMEM
 };
 
 template <uint32_t srate, typename sample_type>
-class Oscillator : public SampleProvider<sample_type> { 
+class Oscillator : public SampleProvider<sample_type> {
   public:
-  static const uint32_t hz_phincr = UINT32_MAX/srate;
-    
-  enum waveform { wf_silence, wf_saw, wf_square, wf_sine }; 
+    static const uint32_t hz_phincr = UINT32_MAX / srate;
 
-  virtual ~Oscillator() {}
-  
-  int8_t octave;
-  uint8_t amp;
-  
+    enum waveform { wf_silence, wf_saw, wf_square, wf_sine };
+
+    virtual ~Oscillator() {}
+
+    int8_t octave;
+    uint8_t amp;
+
   private:
-  waveform wave;
-  
+    waveform wave;
+
   public:
-  uint32_t phacc;
-  uint32_t phincr;
-  uint32_t detune_phincr;
-  mutable uint8_t last_sine_msb;
-  mutable sample_type last_sine_sample;
- 
-  Oscillator () : 
-    amp(255),
-    wave(wf_saw), 
-    octave(0), 
-    phacc(rand()), 
-    phincr(0), 
-    detune_phincr(0),
-    last_sine_msb(0),
-    last_sine_sample(0)
+    uint32_t phacc;
+    uint32_t phincr;
+    uint32_t detune_phincr;
+    mutable uint8_t last_sine_msb;
+    mutable sample_type last_sine_sample;
+
+    Oscillator () :
+      amp(255),
+      wave(wf_saw),
+      octave(0),
+      phacc(rand()),
+      phincr(0),
+      detune_phincr(0),
+      last_sine_msb(0),
+      last_sine_sample(0)
     {
       set_wave(wave);
     }
 
-  inline void set_hz(uint16_t hz_q16n0, uint8_t hz_q0n8 = 0) {
-    phincr = (hz_phincr * hz_q16n0) + (hz_phincr * hz_q0n8 >> 8);
-  }
-
-  inline void set_note(uint8_t note) {
-    phincr = (pgm_read_dword(notes + note) << octave) + detune_phincr; 
-  }  
-
-  inline void set_detune_hz(uint16_t hz_q4n4) {
-    detune_phincr = hz_phincr*hz_q4n4 >> 4;
-  }
-  
-  template <uint8_t voices> 
-  static inline sample_type play_mixed(Oscillator* os) { // converts out to unsigned!       
-    if (voices == 1) 
-      return os[0].read();
-    else if (voices == 2) 
-      return (os[0].read() >> 1) + (os[1].read() >> 1);
-    else if (voices == 3)
-      return (os[0].read() >> 2) + (os[1].read() >> 2) + (os[2].read() >> 2);
-    else if (voices == 4)
-      return (os[0].read() >> 2) + (os[1].read() >> 2) + (os[2].read() >> 2) + (os[3].read() >> 2);
-
-//    typename traits::mix_type mix = 0;
-//    static const uint8_t amp = voices == 1 ? 255 : (UINT8_MAX+1)/voices;
-//
-//    for (uint8_t v = 0; v < voices; v++)
-//      mix += os[v].read();
-//  
-//    return mul_T1U8S<amp>(mix);
-  }
-
-  inline sample_type render_silence() const { 
-    return SampleProvider<sample_type>::traits::silence;
-  }
-  
-  inline sample_type render_saw() const {
-    return (phacc >> 24) + SampleProvider<sample_type>::traits::minimum;
-  }
-
-  inline sample_type render_square() const {
-      return phacc & (1 << 31) ? SampleProvider<sample_type>::traits::maximum : SampleProvider<sample_type>::traits::minimum;  
-  }
-
-  inline sample_type render_sine() const {
-    uint8_t tmp = phacc >> 24;
-    
-    if (tmp != last_sine_msb) {
-      last_sine_msb = tmp;
-      last_sine_sample = pgm_read_byte(SampleProvider<sample_type>::traits::sine_table+last_sine_msb);
+    inline void set_hz(uint16_t hz_q16n0, uint8_t hz_q0n8 = 0) {
+      phincr = (hz_phincr * hz_q16n0) + (hz_phincr * hz_q0n8 >> 8);
     }
 
-    return last_sine_sample;
-  }
-      
-  inline void set_wave(waveform wf) {
-    wave = wf;
-   }
- 
-  virtual inline sample_type read() {
-   phacc += phincr;
-
-   switch (wave) {
-    case 0:
-      return render_silence();
-    case 1:
-      return render_saw();
-    case 2:
-      return render_square();
-    case 3: 
-      return render_sine();
+    inline void set_note(uint8_t note) {
+      phincr = (pgm_read_dword(notes + note) << octave) + detune_phincr;
     }
-  }
+
+    inline void set_detune_hz(uint16_t hz_q4n4) {
+      detune_phincr = hz_phincr * hz_q4n4 >> 4;
+    }
+
+    template <uint8_t voices>
+    static inline sample_type play_mixed(Oscillator* os) { // converts out to unsigned!
+      if (voices == 1)
+        return os[0].read();
+      else if (voices == 2)
+        return (os[0].read() >> 1) + (os[1].read() >> 1);
+      else if (voices == 3)
+        return (os[0].read() >> 2) + (os[1].read() >> 2) + (os[2].read() >> 2);
+      else if (voices == 4)
+        return (os[0].read() >> 2) + (os[1].read() >> 2) + (os[2].read() >> 2) + (os[3].read() >> 2);
+
+      //    typename traits::mix_type mix = 0;
+      //    static const uint8_t amp = voices == 1 ? 255 : (UINT8_MAX+1)/voices;
+      //
+      //    for (uint8_t v = 0; v < voices; v++)
+      //      mix += os[v].read();
+      //
+      //    return mul_T1U8S<amp>(mix);
+    }
+
+    inline sample_type render_silence() const {
+      return SampleProvider<sample_type>::traits::silence;
+    }
+
+    inline sample_type render_saw() const {
+      return (phacc >> 24) + SampleProvider<sample_type>::traits::minimum;
+    }
+
+    inline sample_type render_square() const {
+      return phacc & (1 << 31) ? SampleProvider<sample_type>::traits::maximum : SampleProvider<sample_type>::traits::minimum;
+    }
+
+    inline sample_type render_sine() const {
+      uint8_t tmp = phacc >> 24;
+
+      if (tmp != last_sine_msb) {
+        last_sine_msb = tmp;
+        last_sine_sample = pgm_read_byte(SampleProvider<sample_type>::traits::sine_table + last_sine_msb);
+      }
+
+      return last_sine_sample;
+    }
+
+    inline void set_wave(waveform wf) {
+      wave = wf;
+    }
+
+    virtual inline sample_type read() {
+      phacc += phincr;
+
+      switch (wave) {
+        case 0:
+          return render_silence();
+        case 1:
+          return render_saw();
+        case 2:
+          return render_square();
+        case 3:
+          return render_sine();
+      }
+    }
 };
