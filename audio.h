@@ -21,7 +21,7 @@ ISR(TIMER0_COMPA_vect) {
 inline bool fill_audio_buffer() {
 #ifdef BUFFER_AUDIO
   if (buff256_writable(abuff)) {
-    buff256_write(abuff, read_voice());
+    buff256_write(abuff, SOURCE.read());
     return true;
   }
   return false;
