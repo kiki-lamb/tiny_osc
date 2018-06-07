@@ -1,4 +1,4 @@
-volatile Buffer<uint8_t, 128> abuff;
+volatile Buffer<uint8_t, 255> abuff;
 
 volatile uint32_t stime = 0;
 

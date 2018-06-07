@@ -25,12 +25,15 @@ uint8_t seq[] = "ffrriufrbbnraamq"; // main riff from 'Sweet Dreams'.
 
 const uint16_t interval = (SRATE / 5) * 3 >> 1;
 
+////////////////////////////////////////////////////////////////////////////////////
+
 void soft_timer() {
   if (stime < (interval))
     return;
 
-  flip_led();
-
+  //flip_led();
+  PORTB &= ~_BV(4);  
+  
   stime = 0;
 
   static uint8_t iix = 0;
@@ -58,5 +61,5 @@ void setup() {
 
 void loop() {
   fill_audio_buffer();
-  if (stime % 16 == 0) soft_timer();
+  soft_timer();
 }
