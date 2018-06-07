@@ -1,8 +1,4 @@
 #include <lambos.h>
-#include <avr/interrupt.h>
-#include <avr/io.h>
-#include <avr/pgmspace.h>
-#include <util/atomic.h>
 
 using namespace lambOS;
 
@@ -21,12 +17,7 @@ using namespace lambOS;
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-uint8_t seq[] = "ffrriufrbbnraamq";
-//  12, 12, 24, 24, 
-//  15, 27, 12, 24, 
-//  8,  8,  20, 24,
-//  7, 7, 19, 24  
-//};
+uint8_t seq[] = "ffrriufrbbnraamq"; // main riff from 'Sweet Dreams'.
 
 void soft_timer() {
   if (stime < (SRATE / 4))
