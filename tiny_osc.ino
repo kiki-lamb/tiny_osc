@@ -33,6 +33,13 @@ void soft_timer() {
     return;
 
   flip_led();
+
+  static bool fl = false;
+  fl = !fl;
+  if (fl)
+    PORTB |= _BV(3);
+  else
+    PORTB &= ~_BV(3);
   
   stime = 0;
 
@@ -56,15 +63,16 @@ void setup() {
   setup_wire();
   setup_voice();
   setup_audio();
-  setup_timers();
+//  setup_timers();
 }
 
 void loop() {
 #ifndef __AVR_ATtiny85__
-//  stime = interval;
-//  delay(500);
+  stime = interval;
+  soft_timer();
+  delay(16);
 #else
   fill_audio_buffer();
-#endif
   soft_timer();
+#endif
 }
