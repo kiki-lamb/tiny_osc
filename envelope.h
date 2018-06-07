@@ -81,5 +81,4 @@ class ADEnvelope : public DEnvelope<srate, a_type> {
     }
 };
 
-ADEnvelope<SRATE / 32> env;
 
