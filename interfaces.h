@@ -39,9 +39,20 @@ class SampleSink {
     }
 
     protected:
-      inline SampleSource<input_type> * get_source() {
-        return source;
+      inline input_type_ sink() {
+        return source->read();
       }
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename input_type_>
+class CustomSampleSink : public SampleSink<input_type_> {
+  public:
+    ~CustomSampleSink() {};
+    typedef void (*func_type)(input_type_);  
+    func_type func;
+    CustomSampleSink(func_type f) : func(f) {}
 };
 
 ////////////////////////////////////////////////////////////////////////////////
