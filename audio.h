@@ -27,7 +27,7 @@ void setup_timers() {
 
   TCCR0A = _BV(WGM01);
   TCCR0B = _BV(CS01);
-  OCR0A = 60; // 33.33 khz 
+  OCR0A = 90; // 60; // 33.33 khz 
 
   TIMSK = _BV(OCIE0A);
 

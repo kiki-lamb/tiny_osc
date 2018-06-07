@@ -14,6 +14,7 @@ using namespace lambOS;
 #include "osc.h"
 #include "buffer.h"
 #include "lpf.h"
+#include "devices.h"
 #include "voice.h"
 #include "i2c.h"
 #include "command.h"
