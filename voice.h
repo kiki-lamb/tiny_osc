@@ -1,11 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define VOICES 2
+#define KDIV 64
 
 typedef Oscillator<SRATE, int8_t> osc_type;
-typedef Oscillator<SRATE / 32, int8_t> lfo_type;
+typedef Oscillator<SRATE / KDIV, int8_t> lfo_type;
 
-ADEnvelope<SRATE / 32> env;
+ADEnvelope<SRATE / KDIV > env;
 
 osc_type oscs[VOICES];
 lfo_type lfo;
@@ -29,12 +30,12 @@ class Amplifier : public SampleProcessor<int8_t, int8_t> {
   inline virtual int8_t process(int8_t v) {
     if (! ix) {
       last_env = env.read() >> 24;
-      //last_lfo = lfo_type::traits::to_uint8_t(lfo.read());
-      //last_env = last_env * (128 | (last_lfo >> 1)) >> 8;
+      last_lfo = lfo_type::traits::to_uint8_t(lfo.read());
+      last_env = last_env * (128 | (last_lfo >> 1)) >> 8;
     }
     
     ix++;
-    ix %= 32;
+    ix %= KDIV;
 
     return Math::mul_T1U8S<8>(v, last_env);
   }
