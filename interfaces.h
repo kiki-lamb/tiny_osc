@@ -34,12 +34,14 @@ class SampleSink {
       
     virtual ~SampleSink() {};
   
-    inline void connect(SampleSource<input_type> * source_ = NULL) {
+    virtual inline void connect(SampleSource<input_type> * source_ = NULL) {
       source = source_;
     }
 
+    virtual inline void sink() = 0;
+
     protected:
-      inline input_type_ sink() {
+      inline input_type_ read() {
         return source->read();
       }
 };
@@ -53,6 +55,9 @@ class CustomSampleSink : public SampleSink<input_type_> {
     typedef void (*func_type)(input_type_);  
     func_type func;
     CustomSampleSink(func_type f) : func(f) {}
+    virtual inline void sink() {
+      (*func)(read());
+    }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -67,7 +72,7 @@ class SampleProcessor : public SampleSource<output_type_> {
       
     virtual ~SampleProcessor() {};
 
-    inline void connect(SampleSource<input_type> * source_ = NULL) {
+    virtual inline void connect(SampleSource<input_type> * source_ = NULL) {
       source = source_;
     }
     
