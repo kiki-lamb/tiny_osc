@@ -6,7 +6,6 @@
 
 using namespace lambOS;
 
-#define VOICES 2 // 3 // 3 will cause buffer underruns/frequency loss if compiled without -O3.
 
 #include "math.h"
 #include "sample_type_traits.h"
@@ -32,7 +31,7 @@ uint8_t seq[] = "ffrriufrbbnraamq";
 //};
 
 void soft_timer() {
-  if (stime < (SRATE / 5))
+  if (stime < (SRATE / 4))
     return;
 
   stime = 0;

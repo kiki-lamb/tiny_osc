@@ -4,22 +4,18 @@ volatile uint32_t stime = 0;
 
 ISR(TIMER0_COMPA_vect) {
   stime++;
-#ifdef BUFFER_AUDIO
   if (! buff256_readable(abuff))
     PORTB |= _BV(4);
   else 
     OCR1A = buff256_read(abuff);
-#else
-  OCR1A = read_voice();
-#endif
 }
 
 inline bool fill_audio_buffer() {
-if (buff256_writable(abuff)) {
-  buff256_write(abuff, VOICE.read());
-  return true;
-}
-return false;
+  if (buff256_writable(abuff)) {
+    buff256_write(abuff, VOICE.read());
+    return true;
+  }
+  return false;
 }
 
 void setup_timers() {
