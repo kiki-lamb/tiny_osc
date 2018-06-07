@@ -9,7 +9,6 @@ using namespace lambOS;
 #include "math.h"
 #include "sample_type_traits.h"
 #include "interfaces.h"
-#include "dsp.h"
 #include "envelope.h"
 #include "osc.h"
 #include "buffer.h"

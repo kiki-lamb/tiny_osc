@@ -28,18 +28,18 @@ class Amplifier : public SampleProcessor<int8_t, int8_t> {
   }
   
   inline virtual int8_t process(int8_t v) {
-     return v;
+    //return v;
       
     if (! ix) {
       last_env = env.read() >> 24;
 ////      last_lfo = lfo_type::traits::to_uint8_t(lfo.read());
 ////      last_env = last_env * (128 | (last_lfo >> 1)) >> 8;
     }
-//    
+    
     ix++;
-    ix %= 128;
-
-    return mul_T1U8S<8>(v, last_env);
+    ix %= 64;
+    return last_env;
+//    return mul_T1U8S<8>(v, last_env);
   }
 };
 
