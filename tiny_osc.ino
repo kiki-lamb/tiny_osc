@@ -12,7 +12,7 @@ using namespace lambOS;
 #include "dsp.h"
 #include "envelope.h"
 #include "osc.h"
-#include "volatile_buff.h"
+#include "buffer.h"
 #include "lpf.h"
 #include "voice.h"
 #include "i2c.h"

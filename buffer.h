@@ -1,14 +1,14 @@
 template <typename T> 
-class VolatileBuff256 {
+class Buffer256 {
   private: 
-  volatile uint8_t write_ix;
-  volatile uint8_t read_ix;
-  volatile uint8_t count;
+  uint8_t write_ix;
+  uint8_t read_ix;
+  uint8_t count;
   volatile T buff[256];
   
   public:
-  VolatileBuff256() : read_ix(0), write_ix(0), count(0) {}
-  ~VolatileBuff256() {}
+  Buffer256() : read_ix(0), write_ix(0), count(0) {}
+  ~Buffer256() {}
 
   inline void write(T t) {
     buff[write_ix] = t;
@@ -32,8 +32,8 @@ class VolatileBuff256 {
   }
 };
 
-template <uint8_t SIZE, typename T> 
-class VolatileBuff {
+template <typename T, uint8_t SIZE> 
+class Buffer {
   private: 
    uint8_t write_ix;
    uint8_t read_ix;
@@ -41,8 +41,8 @@ class VolatileBuff {
    T buff[SIZE];
   
   public:
-  VolatileBuff() : read_ix(0), write_ix(0), count(0) {}
-  ~VolatileBuff() {}
+  Buffer() : read_ix(0), write_ix(0), count(0) {}
+  ~Buffer() {}
 
   inline void write(T t) {
     buff[write_ix] = t;
