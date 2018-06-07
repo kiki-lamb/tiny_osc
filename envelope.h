@@ -56,7 +56,7 @@ class ADEnvelope : public DEnvelope<srate, a_type> {
       attack(0){}
 
     virtual inline void trigger() {
-      attack = DEnvelope<srate, a_type>::maximum - DEnvelope<srate>::decay; // why did I add this subtract??
+      attack = DEnvelope<srate, a_type>::maximum; // - DEnvelope<srate>::decay; // why did I add this subtract??
       DEnvelope<srate>::trigger();
     }
 

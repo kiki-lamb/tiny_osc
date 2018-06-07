@@ -16,11 +16,14 @@ using namespace lambOS;
 #include "led.h"
 
 ////////////////////////////////////////////////////////////////////////////////////
+// NOTE: Tiny must be be fused for PLL clock, code must be compiled with -O3 or
+//       buffer underruns will occur.
+////////////////////////////////////////////////////////////////////////////////////
 
 uint8_t seq[] = "ffrriufrbbnraamq"; // main riff from 'Sweet Dreams'.
 
 void soft_timer() {
-  if (stime < (SRATE / 3))
+  if (stime < (SRATE / 4))
     return;
 
   flip_led();
@@ -31,7 +34,7 @@ void soft_timer() {
   
   env.trigger();
 
-  uint8_t note = seq[iix >> 0] - 60;
+  uint8_t note = seq[iix >> 0] - 55;
 
   for (uint16_t ix = 0, f = note; ix < VOICES; ix ++)
     oscs[ix].set_note(f);

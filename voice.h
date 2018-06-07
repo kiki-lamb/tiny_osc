@@ -41,7 +41,7 @@ class Amplifier : public SampleProcessor<int8_t, int8_t> {
 };
 
 void setup_voice() {
-  lfo.set_hz(10, 0b00000000);
+  lfo.set_hz(8, 0b00000000);
   lfo.set_wave(3);
  
   oscs[0].set_detune_hz(0b00000000);  
@@ -57,12 +57,12 @@ void setup_voice() {
   oscs[1].set_note(48);
   
   env.set_a_time(1024);
-  env.set_d_time(0b00000100);
+  env.set_d_time(0b00000110);
 }
 
 UnityMix mixer(&oscs[0], &oscs[1]); 
-//Amplifier amp(&mixer);
-//ConvertToUnsigned<int8_t> converter(&amp);
-ConvertToUnsigned<int8_t> converter(&mixer);
+Amplifier amp(&mixer);
+ConvertToUnsigned<int8_t> converter(&amp);
+//ConvertToUnsigned<int8_t> converter(&mixer);
 
 #define VOICE converter

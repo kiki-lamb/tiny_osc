@@ -1,9 +1,9 @@
-#define SRATE 33333
-
 #ifndef __AVR__
 #define pgm_read_dword(x) (*(x))
 #define pgm_read_byte(x) (*(x))
 #endif
+
+#define SRATE 25000
 
 const uint32_t notes[] 
 #ifdef __AVR__
