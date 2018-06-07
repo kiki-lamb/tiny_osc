@@ -7,19 +7,63 @@ class VolatileBuff256 {
   volatile T buff[256];
   
   public:
-  Buff256() : read_ix(0), write_ix(0), count(0) {}
-  ~Buff256() {}
+  VolatileBuff256() : read_ix(0), write_ix(0), count(0) {}
+  ~VolatileBuff256() {}
 
   inline void write(T t) {
-    buff[count++, write_ix++] = t;
+    buff[write_ix] = t;
+    count++;
+    write_ix++;
   }
 
   inline T read() {
-    return buff[count--, read_ix++];
+    T tmp = buff[read_ix];
+    count--;
+    read_ix++;
+    return tmp; 
   }
 
   inline bool writeable() {
     return count < 255;
+  }
+
+  inline bool readable() {
+    return count;
+  }
+};
+
+template <typename T, uint8_t SIZE> 
+class VolatileBuff {
+  private: 
+  volatile uint8_t write_ix;
+  volatile uint8_t read_ix;
+  volatile uint8_t count;
+  volatile T buff[SIZE];
+  
+  public:
+  VolatileBuff() : read_ix(0), write_ix(0), count(0) {}
+  ~VolatileBuff() {}
+
+  inline void write(T t) {
+    buff[write_ix] = t;
+    count++;
+    count %= SIZE;
+    write_ix++;
+    write_ix %= SIZE;
+  }
+
+  inline T read() {
+    T tmp = buff[read_ix];
+    count--;
+    count %= SIZE;
+    read_ix++;
+    read_ix %= SIZE;
+    
+    return tmp; 
+  }
+
+  inline bool writeable() {
+    return count < (SIZE-1);
   }
 
   inline bool readable() {
