@@ -13,13 +13,11 @@
 
 int main() {
 	Oscillator<40000, int8_t> osc;
-	Attenuator att;
 	
 	osc.set_hz(200);
-	att.connect(&osc);
 	
 	for(size_t x = 0; x < 200; x++)
-		printf("%d\n", att.read());
+		printf("%d\n", osc.read());
 	//printf("%d\n", osc.read());
 	
 }

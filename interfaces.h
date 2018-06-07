@@ -58,7 +58,7 @@ class CustomSampleSink : public SampleSink<input_type_> {
       connect(source);
     }
     virtual inline bool sink() {
-      return (*func)(read());
+      return (*func)(SampleSink<input_type_>::read());
     }
 };
 

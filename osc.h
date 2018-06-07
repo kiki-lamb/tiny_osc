@@ -5,7 +5,11 @@
 #define pgm_read_byte(x) (*(x))
 #endif
 
-const uint32_t notes[] PROGMEM  = {
+const uint32_t notes[] 
+#ifdef __AVR__
+PROGMEM
+#endif
+= {
   561833, 595241, 630636, 668136, 707865, 749957,
   794551, 841798, 891854, 944886, 1001072, 1060599,
   1123666, 1190482, 1261272, 1336271, 1415730, 1499913,

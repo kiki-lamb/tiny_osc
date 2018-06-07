@@ -32,7 +32,7 @@ class VolatileBuff256 {
   }
 };
 
-template <typename T, uint8_t SIZE> 
+template <uint8_t SIZE, typename T> 
 class VolatileBuff {
   private: 
   volatile uint8_t write_ix;
@@ -47,6 +47,7 @@ class VolatileBuff {
   inline void write(T t) {
     buff[write_ix] = t;
     count++;
+    count %= SIZE;
     write_ix++;
     write_ix %= SIZE;
   }
@@ -54,7 +55,7 @@ class VolatileBuff {
   inline T read() {
     T tmp = buff[read_ix];
     count--;
-//    count %= SIZE;
+    count %= SIZE;
     read_ix++;
     read_ix %= SIZE;
     
@@ -62,10 +63,11 @@ class VolatileBuff {
   }
 
   inline bool writeable() {
-    return count < (SIZE-1);
+    return count < SIZE;
   }
 
   inline bool readable() {
+    return true;
     return count;
   }
 };
