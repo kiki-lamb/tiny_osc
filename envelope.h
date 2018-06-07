@@ -1,5 +1,5 @@
 template <uint32_t srate, typename a_type = uint32_t > // a_type should be an unsigned integer type.
-class Envelope : public SampleProvider<a_type> {
+class Envelope : public SampleSource<a_type> {
   public:
   virtual ~Envelope() {};
   virtual void trigger() = 0;

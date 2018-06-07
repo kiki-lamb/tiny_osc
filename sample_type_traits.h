@@ -9,7 +9,6 @@ template <typename sample_t> class sample_type_traits {
 //    static const int16_t bias_to_signed;
 //    static const int16_t bias_to_unsigned;
 //    static const value_type * sine_table;
-      static inline value_type id(value_type x) { return x; };
 };
 
 template <> class sample_type_traits<int8_t> {
@@ -25,6 +24,7 @@ template <> class sample_type_traits<int8_t> {
     static uint8_t to_uint8_t(value_type v) {
       return v + bias_to_unsigned;
     }
+    static inline value_type id(value_type x) { return x; };
 };
 
 const int8_t * sample_type_traits<int8_t>::sine_table = lambOS::Tables::sin256_int8_data;
@@ -42,6 +42,7 @@ template <> class sample_type_traits<uint8_t> {
     static uint8_t to_uint8_t(value_type v) {
       return v;
     }
+    static inline value_type id(value_type x) { return x; };
 };
 
 const uint8_t * sample_type_traits<uint8_t>::sine_table = lambOS::Tables::sin256_uint8_data;
