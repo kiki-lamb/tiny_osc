@@ -2,6 +2,7 @@
 
 using namespace lambOS;
 
+#include "led.h"
 #include "math.h"
 #include "sample_type_traits.h"
 #include "interfaces.h"
@@ -13,7 +14,6 @@ using namespace lambOS;
 #include "i2c.h"
 #include "command.h"
 #include "audio.h"
-#include "led.h"
 
 ////////////////////////////////////////////////////////////////////////////////////
 // NOTE: Tiny must be be fused for PLL clock, code must be compiled with -O3 or
@@ -31,8 +31,7 @@ void soft_timer() {
   if (stime < (interval))
     return;
 
-  //flip_led();
-  PORTB &= ~_BV(4);  
+  flip_led();
   
   stime = 0;
 
@@ -62,4 +61,6 @@ void setup() {
 void loop() {
   fill_audio_buffer();
   soft_timer();
+  delay(1000);
+  stime = interval;
 }
