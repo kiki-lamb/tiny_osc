@@ -59,6 +59,6 @@ inline void setup_timers() {
 
 #endif
 
-  sei;
+  sei();
 }
 
