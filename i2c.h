@@ -1,4 +1,5 @@
 //#define USE_WIRE 1
+#include "buff.h"
 
 #ifdef USE_WIRE
 #include <TinyWireS.h>

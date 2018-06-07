@@ -12,7 +12,6 @@ using namespace lambOS;
 #include "dsp.h"
 #include "envelope.h"
 #include "osc.h"
-#include "buff.h"
 #include "volatile_buff.h"
 #include "lpf.h"
 #include "voice.h"
