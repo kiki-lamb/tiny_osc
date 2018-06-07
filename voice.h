@@ -26,15 +26,15 @@ class Amplifier : public SampleProcessor<int8_t, int8_t> {
   }
   
   inline virtual int8_t process(int8_t v) {
-//    if (! ix) {
-//      last_env = env.read() >> 24;
-//      last_lfo = lfo_type::traits::to_uint8_t(lfo.read());
-//      last_env = last_env * (128 | (last_lfo >> 1)) >> 8;
-//    }
+    if (! ix) {
+      last_env = env.read() >> 24;
+      last_lfo = lfo_type::traits::to_uint8_t(lfo.read());
+      last_env = last_env * (128 | (last_lfo >> 1)) >> 8;
+    }
     
-//    ix++;
-//    ix %= 256;
-return v;
+    ix++;
+    ix %= 256;
+//return v;
     return mul_T1U8S<8>(v, last_env);
   }
 };

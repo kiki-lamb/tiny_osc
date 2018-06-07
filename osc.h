@@ -41,7 +41,7 @@ class Oscillator : public SampleSource<sample_type> {
 
     enum waveform { wf_silence, wf_saw, wf_square, wf_sine };
 
-    virtual ~Oscillator() {}
+    inline virtual ~Oscillator() {}
 
     int8_t octave;
     uint8_t amp;
@@ -56,7 +56,7 @@ class Oscillator : public SampleSource<sample_type> {
     mutable uint8_t last_sine_msb;
     mutable sample_type last_sine_sample;
 
-    Oscillator () :
+    inline Oscillator () :
       amp(255),
       wave(wf_saw),
       octave(0),

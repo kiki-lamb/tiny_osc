@@ -17,7 +17,7 @@ class CustomSampleSource : public SampleSource<output_type_> {
   typedef output_type_ (*func_type)();
   func_type func;
   CustomSampleSource(func_type f) : func(f) {};
-  virtual ~CustomSampleSource() {};  
+  inline virtual ~CustomSampleSource() {};  
   inline virtual output_type_ read() {
     return (*func)();
   }
@@ -51,10 +51,10 @@ class SampleSink {
 template <typename input_type_>
 class CustomSampleSink : public SampleSink<input_type_> {
   public:
-    ~CustomSampleSink() {};
+    inline ~CustomSampleSink() {};
     typedef bool (*func_type)(input_type_);  
     func_type func;
-    CustomSampleSink(func_type f, SampleSource<input_type_> * source = NULL) : func(f) {
+    inline CustomSampleSink(func_type f, SampleSource<input_type_> * source = NULL) : func(f) {
       connect(source);
     }
     virtual inline bool sink() {
@@ -72,7 +72,7 @@ class SampleProcessor : public SampleSource<output_type_> {
   
     SampleSource<input_type> * source;
       
-    virtual ~SampleProcessor() {};
+    inline virtual ~SampleProcessor() {};
 
     virtual inline void connect(SampleSource<input_type> * source_ = NULL) {
       source = source_;
@@ -82,7 +82,7 @@ class SampleProcessor : public SampleSource<output_type_> {
       return process(source->read());
     }
     
-    virtual output_type process(input_type) = 0;
+    virtual inline output_type process(input_type) = 0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -94,11 +94,11 @@ class CustomSampleProcessor : public SampleProcessor<input_type_, output_type_> 
   
   func_type func;
   
-  CustomSampleProcessor(func_type f, SampleSource<input_type_> * source = NULL) : func(f) {
+  inline CustomSampleProcessor(func_type f, SampleSource<input_type_> * source = NULL) : func(f) {
     connect(source);
   };
   
-  virtual ~CustomSampleProcessor() {};
+  inline virtual ~CustomSampleProcessor() {};
   
   inline virtual output_type_ process(input_type_ v) {
     return (*func)(v);

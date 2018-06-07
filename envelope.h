@@ -1,7 +1,7 @@
 template <uint32_t srate, typename a_type = uint32_t > // a_type should be an unsigned integer type.
 class Envelope : public SampleSource<a_type> {
   public:
-  virtual ~Envelope() {};
+  inline virtual ~Envelope() {};
   virtual void trigger() = 0;
 };
 
@@ -16,7 +16,7 @@ class DEnvelope : public Envelope<srate, a_type> {
     acc_type decay;
     acc_type decay_incr;
     
-    DEnvelope() : 
+    inline DEnvelope() : 
       decay_incr(hz_phincr),
       decay(0) {
     }
@@ -40,7 +40,7 @@ class DEnvelope : public Envelope<srate, a_type> {
       decay_incr = hz_phincr * hz_q4n4 >> 4;      
     }
 
-    virtual ~DEnvelope() {}
+    inline virtual ~DEnvelope() {}
 };
 
 template <uint32_t srate, typename a_type = uint32_t >
@@ -49,14 +49,14 @@ class ADEnvelope : public DEnvelope<srate, a_type> {
     typename DEnvelope<srate>::acc_type attack;
     typename DEnvelope<srate>::acc_type attack_incr;
     
-    virtual ~ADEnvelope() {}
+    inline virtual ~ADEnvelope() {}
 
-    ADEnvelope() : 
+    inline ADEnvelope() : 
       attack_incr(DEnvelope<srate, a_type>::maximum),
       attack(0){}
 
     virtual inline void trigger() {
-      attack = DEnvelope<srate, a_type>::maximum - DEnvelope<srate>::decay;
+      attack = DEnvelope<srate, a_type>::maximum - DEnvelope<srate>::decay; // why did I add this subtract??
       DEnvelope<srate>::trigger();
     }
 

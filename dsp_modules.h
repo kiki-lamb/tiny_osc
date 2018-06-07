@@ -2,8 +2,8 @@
 template <typename input, typename output = input>
 class Identity : public SampleProcessor<input, output> {
   public:
-  virtual ~Identity() {};
-  Identity(SampleSource<input> * in = NULL) {
+  inline virtual ~Identity() {};
+  inline Identity(SampleSource<input> * in = NULL) {
     connect(in);
   }
   inline virtual output process(input v) {
@@ -18,9 +18,9 @@ class UnityMix : public SampleSource<int8_t> {
   Identity<int8_t> input1;
   Identity<int8_t> input2;
 
-  virtual ~UnityMix() {}; 
+  inline virtual ~UnityMix() {}; 
   
-  UnityMix(SampleSource<int8_t> * in1, SampleSource<int8_t> * in2) {
+  inline UnityMix(SampleSource<int8_t> * in1, SampleSource<int8_t> * in2) {
       input1.connect(in1);
       input2.connect(in2);
   }
@@ -38,10 +38,12 @@ class UnityMix : public SampleSource<int8_t> {
 template <typename input>
 class ConvertToUnsigned : public SampleProcessor<input, typename sample_type_traits<input>::unsigned_type> {
   public:
-  virtual ~ConvertToUnsigned() {};
-  ConvertToUnsigned(SampleSource<input> * in) {
+  inline virtual ~ConvertToUnsigned() {};
+  
+  inline ConvertToUnsigned(SampleSource<input> * in) {
     connect(in);
   }
+  
   inline virtual uint8_t process(input v) {
     return sample_type_traits<input>::to_uint8_t(v);
   }
@@ -52,14 +54,14 @@ class ConvertToUnsigned : public SampleProcessor<input, typename sample_type_tra
 template <typename input>
 class ConvertToSigned : public SampleProcessor<input, typename sample_type_traits<input>::signed_type> {
   public:
-  virtual ~ConvertToSigned() {};
-  ConvertToSigned(SampleSource<input> * in) {
+  inline virtual ~ConvertToSigned() {};
+  
+  inline ConvertToSigned(SampleSource<input> * in) {
     connect(in);
   }
+  
   inline virtual int8_t process(input v) {
     return sample_type_traits<input>::to_int8_t(v);
   }
 };
-
-
 

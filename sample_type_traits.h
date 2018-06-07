@@ -23,10 +23,10 @@ template <> class sample_type_traits<int8_t> {
     static const int16_t bias_to_signed = 0;
     static const int16_t bias_to_unsigned = 128;
     static const value_type * sine_table;
-    static uint8_t to_uint8_t(value_type v) {
+    static inline uint8_t to_uint8_t(value_type v) {
       return v + bias_to_unsigned;
     }
-    static int8_t to_int8_t(value_type v) {
+    static inline int8_t to_int8_t(value_type v) {
       return v;
     }
     static inline value_type id(value_type x) { return x; };
@@ -46,10 +46,10 @@ template <> class sample_type_traits<uint8_t> {
     static const int16_t bias_to_signed = -128;
     static const int16_t bias_to_unsigned = 0;
     static const value_type * sine_table;
-    static uint8_t to_uint8_t(value_type v) {
+    static inline uint8_t to_uint8_t(value_type v) {
       return v;
     }
-    static int8_t to_int8_t(value_type v) {
+    static inline int8_t to_int8_t(value_type v) {
       return v + bias_to_signed;
     }
     static inline value_type id(value_type x) { return x; };
