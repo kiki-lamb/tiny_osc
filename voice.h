@@ -16,27 +16,29 @@ lfo_type lfo;
 
 class Amplifier : public SampleProcessor<int8_t, int8_t> {
   private:
-  uint8_t ix ;
+  uint16_t ix;
   uint8_t last_env;
   uint8_t last_lfo;
   
   public:
   virtual ~Amplifier() {};
   Amplifier(SampleSource<int8_t> * in) : 
-  ix(0), last_env(255), last_lfo(0) {
+  ix(1), last_env(255), last_lfo(0) {
     connect(in);
   }
   
   inline virtual int8_t process(int8_t v) {
+     return v;
+      
     if (! ix) {
       last_env = env.read() >> 24;
-      last_lfo = lfo_type::traits::to_uint8_t(lfo.read());
-      last_env = last_env * (128 | (last_lfo >> 1)) >> 8;
+////      last_lfo = lfo_type::traits::to_uint8_t(lfo.read());
+////      last_env = last_env * (128 | (last_lfo >> 1)) >> 8;
     }
-
+//    
     ix++;
-    ix %= 32;
-    
+    ix %= 128;
+
     return mul_T1U8S<8>(v, last_env);
   }
 };

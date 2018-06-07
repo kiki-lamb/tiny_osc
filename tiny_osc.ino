@@ -58,12 +58,11 @@ void setup() {
   setup_wire();
   setup_voice();
   setup_audio();
-  //delay(500); 
   setup_timers();
 }
 
 void loop() {
-  while (fill_audio_buffer());
-  process_commands();
+  /* while */ (fill_audio_buffer());
+  //process_commands();
   soft_timer();
 }
