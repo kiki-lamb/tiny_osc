@@ -20,7 +20,7 @@ using namespace lambOS;
 uint8_t seq[] = "ffrriufrbbnraamq"; // main riff from 'Sweet Dreams'.
 
 void soft_timer() {
-  if (stime < (SRATE / 4))
+  if (stime < (SRATE / 3))
     return;
 
   flip_led();
@@ -51,7 +51,6 @@ void setup() {
 }
 
 void loop() {
-  /* while */ (fill_audio_buffer());
-  //process_commands();
-  soft_timer();
+  fill_audio_buffer();
+  if (stime % 16 == 0) soft_timer();
 }

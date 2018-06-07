@@ -1,4 +1,4 @@
-#define SRATE 40000
+#define SRATE 33333
 
 #ifndef __AVR__
 #define pgm_read_dword(x) (*(x))
@@ -9,7 +9,7 @@ const uint32_t notes[]
 #ifdef __AVR__
 PROGMEM
 #endif
-= {
+= { // Regenerate this, tuning will be a bit off until then.
   561833, 595241, 630636, 668136, 707865, 749957,
   794551, 841798, 891854, 944886, 1001072, 1060599,
   1123666, 1190482, 1261272, 1336271, 1415730, 1499913,
