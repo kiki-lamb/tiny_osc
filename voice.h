@@ -25,10 +25,6 @@ class Amplifier : public SampleProcessor<int8_t, int8_t> {
   ix(1), last_env(255), last_lfo(0) {
     connect(in);
   }
-  
-  int8_t __attribute__ ((noinline)) multiply(int8_t v, uint8_t m) {
-    return Math::mul_T1U8S<8>(v, m);
-  }
 
   inline virtual int8_t process(int8_t v) {
     if (! ix) {
@@ -40,7 +36,7 @@ class Amplifier : public SampleProcessor<int8_t, int8_t> {
     ix++;
     ix %= 32;
 
-    return multiply(v, last_env); 
+    return Math::mul_T1U8S<8>(v, last_env);
   }
 };
 
