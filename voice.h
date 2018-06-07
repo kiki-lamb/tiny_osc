@@ -26,17 +26,21 @@ class Amplifier : public SampleProcessor<int8_t, int8_t> {
     connect(in);
   }
   
+  int8_t __attribute__ ((noinline)) multiply(int8_t v, uint8_t m) {
+    return Math::mul_T1U8S<8>(v, m);
+  }
+
   inline virtual int8_t process(int8_t v) {
     if (! ix) {
       last_env = env.read() >> 24;
-      last_lfo = lfo_type::traits::to_uint8_t(lfo.read());
-      last_env = last_env * (128 | (last_lfo >> 1)) >> 8;
+      //last_lfo = lfo_type::traits::to_uint8_t(lfo.read());
+      //last_env = last_env * (128 | (last_lfo >> 1)) >> 8;
     }
     
     ix++;
     ix %= 32;
 
-    return Math::mul_T1U8S<8>(v, last_env);
+    return multiply(v, last_env); 
   }
 };
 
@@ -56,8 +60,8 @@ void setup_voice() {
   oscs[0].set_note(48);
   oscs[1].set_note(48);
   
-  env.set_a_time(1024);
-  env.set_d_time(0b00001000);
+  env.set_a_time(512);
+  env.set_d_time(0b00000111);
 }
 
 UnityMix mixer(&oscs[0], &oscs[1]); 
