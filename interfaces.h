@@ -38,7 +38,7 @@ class SampleSink {
       source = source_;
     }
 
-    virtual inline void sink() = 0;
+    virtual inline bool sink() = 0;
 
     protected:
       inline input_type_ read() {
@@ -52,11 +52,13 @@ template <typename input_type_>
 class CustomSampleSink : public SampleSink<input_type_> {
   public:
     ~CustomSampleSink() {};
-    typedef void (*func_type)(input_type_);  
+    typedef bool (*func_type)(input_type_);  
     func_type func;
-    CustomSampleSink(func_type f) : func(f) {}
-    virtual inline void sink() {
-      (*func)(read());
+    CustomSampleSink(func_type f, SampleSource<input_type_> * source = NULL) : func(f) {
+      connect(source);
+    }
+    virtual inline bool sink() {
+      return (*func)(read());
     }
 };
 

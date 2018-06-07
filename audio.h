@@ -1,8 +1,4 @@
-#define BUFFER_AUDIO
-
-#ifdef BUFFER_AUDIO
-  declare_buff256(uint8_t, abuff);
-#endif
+declare_buff256(uint8_t, abuff);
 
 volatile uint32_t stime = 0;
 
@@ -14,20 +10,16 @@ ISR(TIMER0_COMPA_vect) {
   else 
     OCR1A = buff256_read(abuff);
 #else
-  OCR1A =  read_voice();
+  OCR1A = read_voice();
 #endif
 }
 
 inline bool fill_audio_buffer() {
-#ifdef BUFFER_AUDIO
-  if (buff256_writable(abuff)) {
-    buff256_write(abuff, SOURCE.read());
-    return true;
-  }
-  return false;
-#else
-  return false;
-#endif
+if (buff256_writable(abuff)) {
+  buff256_write(abuff, VOICE.read());
+  return true;
+}
+return false;
 }
 
 void setup_timers() {
@@ -50,8 +42,6 @@ void setup_timers() {
 }
 
 void setup_audio() {
-#ifdef BUFFER_AUDIO
   while (fill_audio_buffer());
-#endif
 }
 
