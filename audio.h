@@ -1,4 +1,4 @@
-//#define NEW_BUFFER
+#define NEW_BUFFER
 
 #ifdef NEW_BUFFER
 Buff256<uint8_t> abuff;
