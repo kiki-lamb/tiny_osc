@@ -1,9 +1,8 @@
-VolatileBuff256<uint8_t> abuff;
-//VolatileBuff<256, uint8_t> abuff;
+VolatileBuff<128, uint8_t> abuff;
 
 volatile uint32_t stime = 0;
 
-ISR(TIMER0_COMPA_vect) {
+ISR(TIMER10_COMPA_vect) {
   stime++;
   if (! abuff.readable())
     PORTB |= _BV(4);

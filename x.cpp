@@ -14,7 +14,7 @@
 
 int main() {
 	Oscillator<40000, int8_t> osc;
-	Buff256<int8_t> buff;
+	VolatileBuff<20, int8_t> buff;
 
 	osc.set_hz(200);
 
@@ -24,11 +24,11 @@ int main() {
 		buff.write(osc.read());
 	
 	printf("Done filling.\n\n");
+	printf ("Emptying...\n");
 
-		printf ("Emptying...\n");
-
+	uint16_t c = 0;
 	while (buff.readable())
-		printf("=> %d\n", buff.read());
+		printf("%d => %d\n", ++c, buff.read());
 	
 	printf("Done emptying.\n");
 	

@@ -35,10 +35,10 @@ class VolatileBuff256 {
 template <uint8_t SIZE, typename T> 
 class VolatileBuff {
   private: 
-  volatile uint8_t write_ix;
-  volatile uint8_t read_ix;
-  volatile uint8_t count;
-  volatile T buff[SIZE];
+   uint8_t write_ix;
+   uint8_t read_ix;
+   uint8_t count;
+   T buff[SIZE];
   
   public:
   VolatileBuff() : read_ix(0), write_ix(0), count(0) {}
@@ -47,7 +47,6 @@ class VolatileBuff {
   inline void write(T t) {
     buff[write_ix] = t;
     count++;
-    count %= SIZE;
     write_ix++;
     write_ix %= SIZE;
   }
@@ -55,7 +54,6 @@ class VolatileBuff {
   inline T read() {
     T tmp = buff[read_ix];
     count--;
-    count %= SIZE;
     read_ix++;
     read_ix %= SIZE;
     
@@ -67,7 +65,6 @@ class VolatileBuff {
   }
 
   inline bool readable() {
-    return true;
     return count;
   }
 };
