@@ -17,13 +17,14 @@ using namespace lambOS;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // NOTE: Tiny must be be fused for PLL clock, code must be compiled with -O3 or
-//       buffer underruns will occur.
+//       buffer underruns will occur. Use an RC filter (104 / 1000k) on the output
+//       pin.
 ////////////////////////////////////////////////////////////////////////////////////
 
 uint8_t seq[] = "ffrriufrbbnraamq"; // main riff from 'Sweet Dreams'.
 
 void soft_timer() {
-  if (stime < (SRATE / 4))
+  if (stime < ((SRATE << 1) / 5))
     return;
 
   flip_led();
