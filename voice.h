@@ -57,7 +57,7 @@ void setup_voice() {
   oscs[1].set_note(48);
   
   env.set_a_time(1024);
-  env.set_d_time(0b00000110);
+  env.set_d_time(0b00001000);
 }
 
 UnityMix mixer(&oscs[0], &oscs[1]); 
