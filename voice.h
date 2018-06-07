@@ -65,6 +65,6 @@ void setup_voice() {
 
 UnityMix mixer(&oscs[0], &oscs[1]); 
 Amplifier nothing(&mixer);
-ConvertToUnsigned converter(&nothing);
+ConvertToUnsigned<int8_t> converter(&nothing);
 
 #define VOICE converter

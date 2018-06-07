@@ -15,6 +15,7 @@ template <> class sample_type_traits<int8_t> {
   public:
     typedef int8_t value_type;
     typedef int16_t mix_type;
+    typedef uint8_t unsigned_type;
     static const int16_t maximum = 127;
     static const int16_t silence = 0;
     static const int16_t minimum = -128;
@@ -33,6 +34,7 @@ template <> class sample_type_traits<uint8_t> {
   public:
     typedef uint8_t value_type;
     typedef uint16_t mix_type;
+    typedef uint8_t unsigned_type;
     static const int16_t maximum = 255;
     static const int16_t silence = 128;
     static const int16_t minimum = 0;
