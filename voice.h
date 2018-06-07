@@ -51,8 +51,8 @@ inline int8_t read_voice();
 //CustomSampleSource<int8_t> source(&read_voice);
 
 UnityMix mixer(&oscs[0], &oscs[1]);
-CustomSampleProcessor<int8_t, int8_t> nothing(&sample_type_traits<int8_t>::id, &mixer);
-CustomSampleProcessor<int8_t, uint8_t> converter(&sample_type_traits<int8_t>::to_uint8_t, &nothing);
+Amplifier amp(&mixer);
+CustomSampleProcessor<int8_t, uint8_t> converter(&sample_type_traits<int8_t>::to_uint8_t, &amp);
 
 inline int8_t read_voice() {
   static uint8_t ix = 0;
