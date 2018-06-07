@@ -6,7 +6,6 @@
 
 using namespace lambOS;
 
-
 #include "math.h"
 #include "sample_type_traits.h"
 #include "interfaces.h"
@@ -14,6 +13,7 @@ using namespace lambOS;
 #include "envelope.h"
 #include "osc.h"
 #include "buff.h"
+#include "volatile_buff.h"
 #include "lpf.h"
 #include "voice.h"
 #include "i2c.h"
@@ -34,6 +34,8 @@ void soft_timer() {
   if (stime < (SRATE / 4))
     return;
 
+  flip_led();
+
   stime = 0;
 
   static uint8_t iix = 0;
@@ -42,10 +44,8 @@ void soft_timer() {
 
   uint8_t note = seq[iix >> 0] - 60;
 
-  for (uint16_t ix = 0, f = note; ix < VOICES; ix ++) {
+  for (uint16_t ix = 0, f = note; ix < VOICES; ix ++)
     oscs[ix].set_note(f);
-    //oscs[ix].phacc = 1 << 30;
-  }
   
   iix ++;
   iix %= 16;
@@ -57,7 +57,8 @@ void setup() {
   setup_led();  
   setup_wire();
   setup_voice();
-  setup_audio(); 
+  setup_audio();
+  //delay(500); 
   setup_timers();
 }
 

@@ -13,6 +13,7 @@ void flash_led() {
 
 void flip_led() {
     static bool f = false;
+    
     f = !f;
 
     if (f)

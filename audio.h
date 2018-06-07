@@ -1,7 +1,7 @@
 #define NEW_BUFFER
 
 #ifdef NEW_BUFFER
-Buff256<uint8_t> abuff;
+VolatileBuff256<uint8_t> abuff;
 #else
 declare_buff256(uint8_t, abuff);
 #endif
