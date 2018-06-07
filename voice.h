@@ -2,8 +2,6 @@
 
 #define VOICES 2
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 typedef Oscillator<SRATE, int8_t> osc_type;
 typedef Oscillator<SRATE / 32, int8_t> lfo_type;
 
@@ -28,18 +26,16 @@ class Amplifier : public SampleProcessor<int8_t, int8_t> {
   }
   
   inline virtual int8_t process(int8_t v) {
-    //return v;
-      
-    if (! ix) {
-      last_env = env.read() >> 24;
-////      last_lfo = lfo_type::traits::to_uint8_t(lfo.read());
-////      last_env = last_env * (128 | (last_lfo >> 1)) >> 8;
-    }
+//    if (! ix) {
+//      last_env = env.read() >> 24;
+//      last_lfo = lfo_type::traits::to_uint8_t(lfo.read());
+//      last_env = last_env * (128 | (last_lfo >> 1)) >> 8;
+//    }
     
-    ix++;
-    ix %= 64;
-    return last_env;
-//    return mul_T1U8S<8>(v, last_env);
+//    ix++;
+//    ix %= 256;
+return v;
+    return mul_T1U8S<8>(v, last_env);
   }
 };
 
@@ -64,7 +60,8 @@ void setup_voice() {
 }
 
 UnityMix mixer(&oscs[0], &oscs[1]); 
-Amplifier nothing(&mixer);
-ConvertToUnsigned<int8_t> converter(&nothing);
+Amplifier nothing(&amp);
+//Amplifier nothing(&oscs[0]);
+ConvertToUnsigned<int8_t> converter(&amp);
 
 #define VOICE converter
