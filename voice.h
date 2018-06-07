@@ -22,7 +22,6 @@ class Amplifier : public SampleProcessor<int8_t, int8_t> {
   virtual ~Amplifier() {};
 
   Amplifier(SampleSource<int8_t> * in) : 
-  
   ix(1), last_env(255), last_lfo(0) {
     connect(in);
   }
@@ -37,7 +36,7 @@ class Amplifier : public SampleProcessor<int8_t, int8_t> {
     ix++;
     ix %= 32;
 
-    return mul_T1U8S<8>(v, last_env);
+    return Math::mul_T1U8S<8>(v, last_env);
   }
 };
 
