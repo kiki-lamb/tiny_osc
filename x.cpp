@@ -10,15 +10,27 @@
 #include "sample_type_traits.h"
 #include "interfaces.h"
 #include "osc.h"
+#include "volatile_buff.h"
 
 int main() {
 	Oscillator<40000, int8_t> osc;
-	
+	Buff256<int8_t> buff;
+
 	osc.set_hz(200);
+
+	printf ("Filling...\n");
+
+	while (buff.writeable())
+		buff.write(osc.read());
 	
-	for(size_t x = 0; x < 200; x++)
-		printf("%d\n", osc.read());
-	//printf("%d\n", osc.read());
+	printf("Done filling.\n\n");
+
+		printf ("Emptying...\n");
+
+	while (buff.readable())
+		printf("=> %d\n", buff.read());
+	
+	printf("Done emptying.\n");
 	
 }
 
