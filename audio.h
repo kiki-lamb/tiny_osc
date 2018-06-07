@@ -17,28 +17,6 @@ inline bool fill_audio_buffer() {
   }
   return false;
 }
-
-void setup_timers() {
-  cli();
-
-#ifdef __AVR_ATtiny85__
-  PLLCSR |= _BV(PLLE) | _BV(PCKE);
-
-  while (! (PLLCSR & _BV(PLOCK)));
-
-  TCCR0A = _BV(WGM01);
-  TCCR0B = _BV(CS01);
-  OCR0A = 79; // 25 khz
-
-  TIMSK = _BV(OCIE0A);
-
-  TCCR1 = _BV(CS10) | _BV(COM1A0) | _BV(PWM1A); // 250khz PWM
-  OCR1A = 255;
-#endif
-
-  sei();
-}
-
 void setup_audio() {
 #ifdef __AVR_ATtiny85__
   DDRB  |= _BV(1);
@@ -47,4 +25,4 @@ void setup_audio() {
 #endif
   while (fill_audio_buffer());
 }
-
+  

@@ -13,6 +13,7 @@ using namespace lambOS;
 #include "voice.h"
 #include "i2c.h"
 #include "command.h"
+#include "timers.h"
 #include "audio.h"
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -59,8 +60,11 @@ void setup() {
 }
 
 void loop() {
+#ifndef __AVR_ATtiny85__
+//  stime = interval;
+//  delay(500);
+#else
   fill_audio_buffer();
+#endif
   soft_timer();
-  delay(1000);
-  stime = interval;
 }
