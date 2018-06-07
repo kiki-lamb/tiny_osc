@@ -23,8 +23,10 @@ using namespace lambOS;
 
 uint8_t seq[] = "ffrriufrbbnraamq"; // main riff from 'Sweet Dreams'.
 
+const uint16_t interval = (SRATE / 5) * 3 >> 1;
+
 void soft_timer() {
-  if (stime < ((SRATE << 1) / 5))
+  if (stime < (interval))
     return;
 
   flip_led();
