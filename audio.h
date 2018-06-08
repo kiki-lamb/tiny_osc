@@ -2,16 +2,12 @@ volatile Buffer<uint8_t, 255> abuff;
 
 volatile uint32_t stime = 0;
 
-ISR(TIMER0_COMPA_vect) {
+ISR(TIMER_ISR) {
   stime++;
   if (! abuff.readable())
     LED_ON;
   else 
-#ifdef __AVR_ATtiny85__
-    OCR1A = abuff.read();
-#else
-    OCR2A = abuff.read();
-#endif
+    PWM_PORT = abuff.read();
 }
 
 inline bool fill_audio_buffer() {

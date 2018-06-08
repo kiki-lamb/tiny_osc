@@ -1,3 +1,11 @@
+#ifdef __AVR_ATtiny85__
+#define TIMER_ISR TIMER0_COMPA_vect
+#define PWM_PORT OCR1A
+#else
+#define TIMER_ISR TIMER1_COMPA_vect
+#define PWM_PORT OCR2A
+#endif
+
 inline void setup_timers() {
   cli();
 
@@ -61,4 +69,5 @@ inline void setup_timers() {
 
   sei();
 }
+
 
