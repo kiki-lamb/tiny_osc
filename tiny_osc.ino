@@ -1,6 +1,8 @@
-#include <lambos.h>
+//#include <lambos.h>
+//using namespace lambOS;
 
-using namespace lambOS;
+#include "/Users/katherinem13/Documents/Arduino/libraries/lambOS/src/tables/kl_sin256_int8.h"
+#include "/Users/katherinem13/Documents/Arduino/libraries/lambOS/src/tables/kl_sin256_uint8.h"
 
 #include "led.h"
 #include "math.h"

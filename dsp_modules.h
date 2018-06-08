@@ -6,7 +6,7 @@ class Identity : public SampleProcessor<input, output> {
   inline Identity(SampleSource<input> * in = NULL) {
     connect(in);
   }
-  inline virtual output process(input v) {
+  inline __attribute((alwaysinline)) virtual output process(input v) {
     return v;
   }
 };

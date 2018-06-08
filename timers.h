@@ -21,7 +21,9 @@ inline void setup_timers() {
   TCCR1 = _BV(CS10) | _BV(COM1A0) | _BV(PWM1A); // 250khz PWM
 
   OCR1A = 255;
-#else
+#else 
+  TIMSK0 = 0;
+  
   OSCCAL = 0xFF;
 
   TCCR1B = (TCCR1B & ~_BV(WGM13)) | _BV(WGM12);

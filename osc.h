@@ -60,7 +60,7 @@ class Oscillator : public SampleSource<sample_type> {
       amp(255),
       wave(wf_saw),
       octave(0),
-      phacc(rand()),
+      phacc(0),
       phincr(0),
       detune_phincr(0),
       last_sine_msb(0),
