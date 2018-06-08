@@ -32,17 +32,10 @@ void soft_timer() {
   if (stime < (interval))
     return;
 
-  flip_led();
-
-  static bool fl = false;
-  fl = !fl;
-  if (fl)
-    PORTB |= _BV(3);
-  else
-    PORTB &= ~_BV(3);
-  
   stime = 0;
 
+  flip_led();
+  
   static uint8_t iix = 0;
   
   env.trigger();
