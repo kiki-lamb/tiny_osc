@@ -79,26 +79,6 @@ class Oscillator : public SampleSource<sample_type> {
       detune_phincr = hz_phincr * hz_q4n4 >> 4;
     }
 
-    template <uint8_t voices>
-    static inline sample_type play_mixed(Oscillator* os) { // converts out to unsigned!
-      if (voices == 1)
-        return os[0].read();
-      else if (voices == 2)
-        return (os[0].read() >> 1) + (os[1].read() >> 1);
-      else if (voices == 3)
-        return (os[0].read() >> 2) + (os[1].read() >> 2) + (os[2].read() >> 2);
-      else if (voices == 4)
-        return (os[0].read() >> 2) + (os[1].read() >> 2) + (os[2].read() >> 2) + (os[3].read() >> 2);
-
-      //    typename traits::mix_type mix = 0;
-      //    static const uint8_t amp = voices == 1 ? 255 : (UINT8_MAX+1)/voices;
-      //
-      //    for (uint8_t v = 0; v < voices; v++)
-      //      mix += os[v].read();
-      //
-      //    return mul_T1U8S<amp>(mix);
-    }
-
     inline sample_type render_silence() const {
       return SampleSource<sample_type>::traits::silence;
     }
