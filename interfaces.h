@@ -17,8 +17,8 @@ class CustomSampleSource : public SampleSource<output_type_> {
   typedef output_type_ (*func_type)();
   func_type func;
   CustomSampleSource(func_type f) : func(f) {};
-  inline virtual ~CustomSampleSource() {};  
-  inline virtual output_type_ read() {
+  virtual inline ~CustomSampleSource() {};  
+  virtual inline output_type_ read() {
     return (*func)();
   }
 };
@@ -72,17 +72,17 @@ class SampleProcessor : public SampleSource<output_type_> {
   
     SampleSource<input_type> * source;
       
-    inline virtual ~SampleProcessor() {};
+    virtual inline ~SampleProcessor() {};
 
     virtual inline void connect(SampleSource<input_type> * source_ = NULL) {
       source = source_;
     }
     
-    inline virtual output_type read() {
+    virtual inline output_type read() {
       return process(source->read());
     }
     
-    virtual inline output_type process(input_type) = 0;
+    virtual inline output_type process(input_type in) { return in; }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -98,9 +98,9 @@ class CustomSampleProcessor : public SampleProcessor<input_type_, output_type_> 
     connect(source);
   };
   
-  inline virtual ~CustomSampleProcessor() {};
+  virtual inline ~CustomSampleProcessor() {};
   
-  inline virtual output_type_ process(input_type_ v) {
+  virtual inline output_type_ process(input_type_ v) {
     return (*func)(v);
   }
 };

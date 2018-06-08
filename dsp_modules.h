@@ -6,8 +6,8 @@ class Identity : public SampleProcessor<input, output> {
   inline Identity(SampleSource<input> * in = NULL) {
     connect(in);
   }
-  inline __attribute((alwaysinline)) virtual output process(input v) {
-    return v;
+  virtual inline __attribute((alwaysinline)) output read() {
+    return SampleProcessor<input, output>::source->read();
   }
 };
 
