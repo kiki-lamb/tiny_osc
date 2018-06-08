@@ -31,7 +31,7 @@ class Amplifier : public SampleProcessor<int8_t, int8_t> {
     if (! ix) {
       last_env = env.read() >> 24;
       last_lfo = lfo_type::traits::to_uint8_t(lfo.read());
-      last_env = last_env * (128 | (last_lfo >> 1)) >> 8;
+      last_env = Math::mul_T1U8S<8>(last_env, (128 | (last_lfo >> 1)));
     }
     
     ix++;
@@ -51,8 +51,8 @@ void setup_voice() {
   oscs[0].octave = 0;
   oscs[1].octave = 1;
   
-  oscs[0].set_wave(osc_type::wf_saw);
-  oscs[1].set_wave(osc_type::wf_saw);
+  oscs[0].set_wave(osc_type::wf_square);
+  oscs[1].set_wave(osc_type::wf_square);
   
   oscs[0].set_note(48);
   oscs[1].set_note(48);

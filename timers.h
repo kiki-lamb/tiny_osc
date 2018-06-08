@@ -12,11 +12,15 @@ inline void setup_timers() {
 #ifdef __AVR_ATtiny85__
   PLLCSR |= _BV(PLLE) | _BV(PCKE);
 
+//  OSCCAL = 0xFF;
+
   while (! (PLLCSR & _BV(PLOCK)));
 
   TCCR0A = _BV(WGM01);
   TCCR0B = _BV(CS01);
   OCR0A = 79; // 25 khz
+  #define SRATE 25000 // (F_CPU/((OCR0A+1)*8)
+
   TIMSK = _BV(OCIE0A);
   TCCR1 = _BV(CS10) | _BV(COM1A0) | _BV(PWM1A); // 250khz PWM
 
@@ -31,6 +35,7 @@ inline void setup_timers() {
   TCCR1B = (TCCR1B & ~(_BV(CS11) | _BV(CS10))) | _BV(CS11) ;  // Prescaler 64
   OCR1A = 79;   // 25000Hz Samplefreq (16000000/((79+1)*8))
   TIMSK1 |= _BV(OCIE1A);
+  #define SRATE 25000
   
   ASSR &= ~(_BV(EXCLK) | _BV(AS2));
 

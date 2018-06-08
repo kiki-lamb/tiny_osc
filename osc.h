@@ -3,8 +3,6 @@
 #define pgm_read_byte(x) (*(x))
 #endif
 
-#define SRATE 25000
-
 const uint32_t notes[] 
 #ifdef __AVR__
 PROGMEM
@@ -110,7 +108,7 @@ class Oscillator : public SampleSource<sample_type> {
     }
 
     inline sample_type render_square() const {
-      return phacc & (1 << 31) ? SampleSource<sample_type>::traits::maximum : SampleSource<sample_type>::traits::minimum;
+      return phacc & (1L << 31) ? SampleSource<sample_type>::traits::maximum : SampleSource<sample_type>::traits::minimum;
     }
 
     inline sample_type render_sine() const {

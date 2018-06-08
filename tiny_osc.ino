@@ -9,13 +9,13 @@
 #include "sample_type_traits.h"
 #include "interfaces.h"
 #include "envelope.h"
+#include "timers.h"
 #include "osc.h"
 #include "buffer.h"
 #include "dsp_modules.h"
 #include "voice.h"
 #include "i2c.h"
 #include "command.h"
-#include "timers.h"
 #include "audio.h"
 
 ////////////////////////////////////////////////////////////////////////////////////
