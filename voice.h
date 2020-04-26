@@ -5,11 +5,12 @@
 
 typedef Oscillator<SRATE, int8_t> osc_type;
 #ifdef AMP_ENABLE
-typedef Oscillator<SRATE / KDIV, int8_t> lfo_type;
-lfo_type lfo;
+  typedef Oscillator<SRATE / KDIV, int8_t> lfo_type;
+
+  lfo_type lfo;
+#endif
 
 ADEnvelope<SRATE / KDIV > env;
-#endif
 
 osc_type oscs[4];
 
