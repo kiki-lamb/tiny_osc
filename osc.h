@@ -33,7 +33,7 @@ PROGMEM
 };
 
 template <uint32_t srate, typename sample_type>
-class Oscillator : public SampleSource<sample_type> {
+class Oscillator : public lamb::SampleSource<sample_type> {
   public:
     static const uint32_t hz_phincr = UINT32_MAX / srate;
 
@@ -80,15 +80,15 @@ class Oscillator : public SampleSource<sample_type> {
     }
 
     inline sample_type render_silence() const {
-      return SampleSource<sample_type>::traits::silence;
+      return lamb::SampleSource<sample_type>::traits::silence;
     }
 
     inline sample_type render_saw() const {
-      return (phacc >> 24) + SampleSource<sample_type>::traits::minimum;
+      return (phacc >> 24) + lamb::SampleSource<sample_type>::traits::minimum;
     }
 
     inline sample_type render_square() const {
-      return phacc & (1L << 31) ? SampleSource<sample_type>::traits::maximum : SampleSource<sample_type>::traits::minimum;
+      return phacc & (1L << 31) ? lamb::SampleSource<sample_type>::traits::maximum : lamb::SampleSource<sample_type>::traits::minimum;
     }
 
     inline sample_type render_sine() const {
@@ -96,7 +96,7 @@ class Oscillator : public SampleSource<sample_type> {
 
       if (tmp != last_sine_msb) {
         last_sine_msb = tmp;
-        last_sine_sample = pgm_read_byte(SampleSource<sample_type>::traits::sine_table + last_sine_msb);
+        last_sine_sample = pgm_read_byte(lamb::SampleSource<sample_type>::traits::sine_table + last_sine_msb);
       }
 
       return last_sine_sample;

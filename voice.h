@@ -15,7 +15,7 @@ osc_type oscs[4];
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class Amplifier : public SampleProcessor<int8_t, int8_t> {
+class Amplifier : public lamb::SampleProcessor<int8_t, int8_t> {
   private:
   uint16_t ix;
 #ifdef AMP_ENABLE
@@ -75,11 +75,11 @@ void setup_voice() {
  #endif
 }
 
-UnityMix mixer(&oscs[0], &oscs[1]); 
+lamb::UnityMix mixer(&oscs[0], &oscs[1]); 
 Amplifier amp(&mixer);
 #ifdef AMP_ENABLE
-ConvertToUnsigned<int8_t> converter(&amp);
+lamb::ConvertToUnsigned<int8_t> converter(&amp);
 #else
-ConvertToUnsigned<int8_t> converter(&oscs[0]);
+lamb::ConvertToUnsigned<int8_t> converter(&oscs[0]);
 #endif
 #define VOICE converter
