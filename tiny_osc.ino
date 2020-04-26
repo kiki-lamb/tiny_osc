@@ -1,5 +1,4 @@
-//#include <lambos.h>
-//using namespace lambOS;
+//#include "D:/Code/liblamb/src/lamb.h"
 
 uint16_t interval;
 
