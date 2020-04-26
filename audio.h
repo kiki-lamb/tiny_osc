@@ -3,6 +3,13 @@ volatile Buffer<uint8_t, 255> abuff;
 volatile uint32_t stime = 0;
 
 ISR(TIMER_ISR) {
+#ifdef STOP
+  static uint16_t stop_ix = 0;
+  if (stop_ix >= STOP)
+    return;
+  stop_ix +=1;
+#endif
+
   stime++;
   
   if (! abuff.readable())
@@ -11,6 +18,10 @@ ISR(TIMER_ISR) {
     uint8_t tmp = abuff.read(); 
     PWM_PORT = tmp;
     Serial.print(255);
+    Serial.print(" ");
+    Serial.print(stime);
+    Serial.print(" ");
+    Serial.print(interval);
     Serial.print(" ");
     Serial.println(tmp);
   }

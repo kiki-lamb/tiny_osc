@@ -1,6 +1,10 @@
 //#include <lambos.h>
 //using namespace lambOS;
 
+uint16_t interval;
+
+#define STOP 2000
+
 #include "D:/Code/liblamb/src/tables/kl_256_int8_t_sin.h"
 #include "D:/Code/liblamb/src/tables/kl_256_uint8_t_sin.h"
 
@@ -25,8 +29,6 @@
 ////////////////////////////////////////////////////////////////////////////////////
 
 uint8_t seq[] = "ffrriufrbbnraamq"; // main riff from 'Sweet Dreams'.
-
-const uint16_t interval = (SRATE / 5) * 3 >> 1;
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -57,6 +59,8 @@ void soft_timer() {
 ////////////////////////////////////////////////////////////////////////////////////
 
 void setup() {
+  interval = 240;
+
   setup_led();  
   setup_wire();
   setup_voice();
