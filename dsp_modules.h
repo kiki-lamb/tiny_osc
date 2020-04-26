@@ -4,9 +4,10 @@ class Identity : public SampleProcessor<input, output> {
   public:
   inline virtual ~Identity() {};
   inline Identity(SampleSource<input> * in = NULL) {
-    connect(in);
+    this->connect(in);
   }
-  virtual inline __attribute((alwaysinline)) output read() {
+//  virtual inline __attribute((alwaysinline)) output read() {
+  virtual inline output read() {
     return SampleProcessor<input, output>::source->read();
   }
 };
@@ -26,7 +27,7 @@ class UnityMix : public SampleSource<int8_t> {
   }
 
   inline virtual int8_t read() {
-    uint16_t tmp;
+    uint16_t tmp = 0;
     tmp += input1.read();
     tmp += input2.read();
     return tmp / 2;
@@ -41,7 +42,7 @@ class ConvertToUnsigned : public SampleProcessor<input, typename sample_type_tra
   inline virtual ~ConvertToUnsigned() {};
   
   inline ConvertToUnsigned(SampleSource<input> * in) {
-    connect(in);
+    this->connect(in);
   }
   
   inline virtual uint8_t process(input v) {
@@ -64,4 +65,3 @@ class ConvertToSigned : public SampleProcessor<input, typename sample_type_trait
     return sample_type_traits<input>::to_int8_t(v);
   }
 };
-

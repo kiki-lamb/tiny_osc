@@ -35,8 +35,8 @@ class Buffer256 {
 template <typename T, uint8_t SIZE> 
 class Buffer {
   private: 
-   uint8_t write_ix;
    uint8_t read_ix;
+   uint8_t write_ix;
    uint8_t count;
    T buff[SIZE];
   
@@ -44,14 +44,14 @@ class Buffer {
   Buffer() : read_ix(0), write_ix(0), count(0) {}
   ~Buffer() {}
 
-  inline void write(T t) {
+  inline void write(T t) volatile {
     buff[write_ix] = t;
     count++;
     write_ix++;
     write_ix %= SIZE;
   }
 
-  inline T read() {
+  inline T read() volatile {
     T tmp = buff[read_ix];
     count--;
     read_ix++;
@@ -60,12 +60,11 @@ class Buffer {
     return tmp; 
   }
 
-  inline bool writeable() {
+  inline bool writeable() volatile {
     return count < SIZE;
   }
 
-  inline bool readable() {
+  inline bool readable() volatile {
     return count;
   }
 };
-

@@ -43,7 +43,7 @@ class Amplifier : public SampleProcessor<int8_t, int8_t> {
 
 void setup_voice() {
   lfo.set_hz(8, 0b00000000);
-  lfo.set_wave(3);
+  lfo.set_wave((lfo_type::waveform)3);
  
   oscs[0].set_detune_hz(0b00000000);  
   oscs[1].set_detune_hz(0b00001100);

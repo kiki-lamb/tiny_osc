@@ -55,9 +55,9 @@ class Oscillator : public SampleSource<sample_type> {
     mutable sample_type last_sine_sample;
 
     inline Oscillator () :
+      octave(0),
       amp(255),
       wave(wf_saw),
-      octave(0),
       phacc(0),
       phincr(0),
       detune_phincr(0),
@@ -119,5 +119,7 @@ class Oscillator : public SampleSource<sample_type> {
         case 3:
           return render_sine();
       }
+
+      return render_silence();
     }
 };

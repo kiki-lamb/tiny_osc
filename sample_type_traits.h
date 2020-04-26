@@ -32,7 +32,7 @@ template <> class sample_type_traits<int8_t> {
     static inline value_type id(value_type x) { return x; };
 };
 
-const int8_t * sample_type_traits<int8_t>::sine_table = lambOS::Tables::sin256_int8_data;
+const int8_t * sample_type_traits<int8_t>::sine_table = lamb::Tables::sin256_int8_t::data;
 
 template <> class sample_type_traits<uint8_t> {
   public:
@@ -55,5 +55,4 @@ template <> class sample_type_traits<uint8_t> {
     static inline value_type id(value_type x) { return x; };
 };
 
-const uint8_t * sample_type_traits<uint8_t>::sine_table = lambOS::Tables::sin256_uint8_data;
-
+const uint8_t * sample_type_traits<uint8_t>::sine_table = lamb::Tables::sin256_uint8_t::data;

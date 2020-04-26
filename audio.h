@@ -4,10 +4,14 @@ volatile uint32_t stime = 0;
 
 ISR(TIMER_ISR) {
   stime++;
+  
   if (! abuff.readable())
     LED_ON;
-  else 
-    PWM_PORT = abuff.read();
+  else {
+    auto tmp = abuff.read(); 
+    PWM_PORT = tmp;
+    Serial.println(tmp);
+  }
 }
 
 inline bool fill_audio_buffer() {

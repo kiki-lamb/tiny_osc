@@ -1,8 +1,8 @@
 //#include <lambos.h>
 //using namespace lambOS;
 
-#include "/Users/katherinem13/Documents/Arduino/libraries/lambOS/src/tables/kl_sin256_int8.h"
-#include "/Users/katherinem13/Documents/Arduino/libraries/lambOS/src/tables/kl_sin256_uint8.h"
+#include "D:/Code/liblamb/src/tables/kl_256_int8_t_sin.h"
+#include "D:/Code/liblamb/src/tables/kl_256_uint8_t_sin.h"
 
 #include "led.h"
 #include "math.h"
@@ -49,6 +49,8 @@ void soft_timer() {
   
   iix ++;
   iix %= 16;
+  
+//  Serial.println(note);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -59,6 +61,7 @@ void setup() {
   setup_voice();
   setup_audio();
   setup_timers();
+  Serial.begin(57600);
 }
 
 void loop() {

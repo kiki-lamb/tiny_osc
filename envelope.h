@@ -17,9 +17,8 @@ class DEnvelope : public Envelope<srate, a_type> {
     acc_type decay_incr;
     
     inline DEnvelope() : 
-      decay_incr(hz_phincr),
-      decay(0) {
-    }
+      decay(0),
+      decay_incr(hz_phincr) {}
 
     virtual inline void trigger() {
       decay = maximum;
@@ -52,8 +51,8 @@ class ADEnvelope : public DEnvelope<srate, a_type> {
     inline virtual ~ADEnvelope() {}
 
     inline ADEnvelope() : 
-      attack_incr(DEnvelope<srate, a_type>::maximum),
-      attack(0){}
+      attack(0),
+      attack_incr(DEnvelope<srate, a_type>::maximum) {}
 
     virtual inline void trigger() {
       attack = DEnvelope<srate, a_type>::maximum; // - DEnvelope<srate>::decay; // why did I add this subtract??
@@ -80,5 +79,3 @@ class ADEnvelope : public DEnvelope<srate, a_type> {
       attack_incr = DEnvelope<srate, a_type>::hz_phincr * hz_q14n2 >> 2;
     }
 };
-
-
