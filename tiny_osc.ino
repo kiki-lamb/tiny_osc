@@ -59,7 +59,7 @@ void soft_timer() {
 ////////////////////////////////////////////////////////////////////////////////////
 
 void setup() {
-  interval = 240;
+  interval = 254;
 
   setup_led();  
   setup_wire();

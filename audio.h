@@ -23,6 +23,8 @@ ISR(TIMER_ISR) {
     Serial.print(" ");
     Serial.print(interval);
     Serial.print(" ");
+    Serial.print(128);
+    Serial.print(" ");
     Serial.println(tmp);
   }
 }

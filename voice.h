@@ -57,8 +57,8 @@ void setup_voice() {
   oscs[0].set_detune_hz(0b00000000);  
   oscs[1].set_detune_hz(0b00001100);
   
-  oscs[0].octave = 1;
-  oscs[1].octave = 1;
+  oscs[0].octave = 2;
+  oscs[1].octave = 2;
   
   oscs[0].set_wave(osc_type::wf_sine);
   oscs[1].set_wave(osc_type::wf_sine);
