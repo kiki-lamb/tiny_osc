@@ -33,7 +33,7 @@ PROGMEM
 };
 
 template <uint32_t srate, typename sample_type>
-class Oscillator : public lamb::SampleSource<sample_type>, lamb::Triggerable {
+class Oscillator : public lamb::SampleSource<sample_type>, public lamb::Triggerable {
   public:
     static const uint32_t hz_phincr = UINT32_MAX / srate;
 

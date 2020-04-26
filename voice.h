@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define VOICES 1
+#define VOICES 2
 #define KDIV 64
 
 typedef Oscillator<SRATE, int8_t> osc_type;
@@ -74,7 +74,8 @@ void setup_voice() {
   lfo.set_wave(lfo_type::wf_sine);
 }
 
-lamb::UnityMix mixer(&oscs[0], &oscs[1]); 
+lamb::UnityMix<int8_t> mixer(&oscs[0], &oscs[1]); 
 Amplifier amp(&mixer);
-lamb::ConvertToUnsigned<int8_t> converter(&oscs[0]);
-#define VOICE converter
+//lamb::ConvertToUnsigned<int8_t> converter(&oscs[0]);
+//lamb::ConvertToUnsigned<int8_t> converter(&mixer);
+#define VOICE mixer

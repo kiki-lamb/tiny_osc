@@ -1,8 +1,8 @@
 template <uint32_t srate, typename sample_type = uint16_t > // sample_type should be an unsigned integer type.
-class Envelope : public lamb::SampleSource<sample_type> {
+class Envelope : public lamb::SampleSource<sample_type>, public lamb::Triggerable {
   public:
   inline virtual ~Envelope() {};
-  virtual void trigger() = 0;
+//  virtual void trigger() = 0;
 };
 
 
