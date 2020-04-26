@@ -3,7 +3,7 @@
 
 uint16_t interval;
 
-#define STOP 2000
+#define STOP 1500
 
 #include "D:/Code/liblamb/src/tables/kl_256_int8_t_sin.h"
 #include "D:/Code/liblamb/src/tables/kl_256_uint8_t_sin.h"
