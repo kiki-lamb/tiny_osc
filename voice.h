@@ -58,8 +58,8 @@ void setup_voice() {
   oscs[0].set_detune_hz(0b00000000);  
   oscs[1].set_detune_hz(0b00001100);
   
-  oscs[0].octave = 3;
-  oscs[1].octave = 4;
+  oscs[0].octave = 4;
+  oscs[1].octave = 3;
   
   oscs[0].set_wave(osc_type::wf_sine);
   oscs[1].set_wave(osc_type::wf_sine);
@@ -76,9 +76,5 @@ void setup_voice() {
 
 lamb::UnityMix mixer(&oscs[0], &oscs[1]); 
 Amplifier amp(&mixer);
-#ifdef AMP_ENABLE
-lamb::ConvertToUnsigned<int8_t> converter(&amp);
-#else
-lamb::ConvertToUnsigned<int8_t> converter(&mixer);
-#endif
+lamb::ConvertToUnsigned<int8_t> converter(&oscs[0]);
 #define VOICE converter
