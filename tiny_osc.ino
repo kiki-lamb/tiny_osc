@@ -16,10 +16,8 @@ uint16_t interval;
 #include "envelope.h"
 #include "timers.h"
 #include "osc.h"
-#include "buffer.h"
 #include "voice.h"
 #include "i2c.h"
-#include "command.h"
 #include "audio.h"
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +60,7 @@ void setup() {
   interval = 254;
 
   setup_led();  
-  setup_wire();
+  setup_i2c();
   setup_voice();
   setup_audio();
   setup_timers();

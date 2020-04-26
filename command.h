@@ -26,7 +26,7 @@
 
 uint8_t CUTOFF = 255;
 
-inline void command(uint8_t cmd_byte, uint8_t param) {
+inline void process_i2c_command(uint8_t cmd_byte, uint8_t param) {
    uint8_t cmd   = cmd_byte & 0b11110000;
    uint8_t vmask = cmd_byte & 0b00001111;
  
@@ -53,9 +53,9 @@ inline void command(uint8_t cmd_byte, uint8_t param) {
    }
 }
 
-inline void process_commands() {
+inline void process_i2c_commands() {
 #ifdef USE_WIRE 
   if (cbuff_count >= 2)
-    command(buff_read(cbuff), buff_read(cbuff));
+    process_i2c_command(light_buffer_read(cbuff), light_buffer_read(cbuff));
 #endif
 }
