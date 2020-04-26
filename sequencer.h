@@ -14,14 +14,14 @@ void sequencer_tick() {
   
   static uint8_t iix = 0;
 
-#ifdef AMP_ENABLE  
+//#ifdef AMP_ENABLE
   env.trigger();
-#endif
+//#endif
 
-  uint8_t note = seq[iix >> 0] - 55;
+//  uint8_t note = seq[iix >> 0] - 55;
 
-  for (uint16_t ix = 0, f = note; ix < VOICES; ix ++)
-    oscs[ix].set_note(f);
+//  for (uint16_t ix = 0, f = note; ix < VOICES; ix ++)
+//    oscs[ix].set_note(f);
   
   iix ++;
   iix %= 16;

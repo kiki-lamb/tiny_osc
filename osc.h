@@ -33,7 +33,7 @@ PROGMEM
 };
 
 template <uint32_t srate, typename sample_type>
-class Oscillator : public lamb::SampleSource<sample_type> {
+class Oscillator : public lamb::SampleSource<sample_type>, lamb::Triggerable {
   public:
     static const uint32_t hz_phincr = UINT32_MAX / srate;
 
@@ -92,12 +92,20 @@ class Oscillator : public lamb::SampleSource<sample_type> {
     }
 
     inline sample_type render_sine() const {
+//      Serial.print("Render at time ");
+//      Serial.print(total_ix);
+//      Serial.println();
+      
       uint8_t tmp = phacc >> 24;
 
       if (tmp != last_sine_msb) {
         last_sine_msb = tmp;
         last_sine_sample = pgm_read_byte(lamb::SampleSource<sample_type>::traits::sine_table + last_sine_msb);
       }
+      
+//      Serial.print("Return index ");
+//      Serial.print(last_sine_msb);
+//      Serial.println();
 
       return last_sine_sample;
     }
@@ -105,7 +113,10 @@ class Oscillator : public lamb::SampleSource<sample_type> {
     inline void set_wave(waveform wf) {
       wave = wf;
     }
-
+    virtual inline void trigger() {
+      this->phacc = 0;
+    }
+    
     virtual inline sample_type read() {
       phacc += phincr;
 

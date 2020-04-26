@@ -2,10 +2,11 @@
 
 uint16_t interval;
 
-#define STOP 1500
+#define STOP 500
 
 #include "liblamb/src/tables/kl_256_int8_t_sin.h"
 #include "liblamb/src/tables/kl_256_uint8_t_sin.h"
+#include "liblamb/src/tables/kl_256_uint8_t_qsin.h"
 #include "liblamb/src/ring_buffer/ring_buffer.h"
 #include "liblamb/src/sample_type_traits/sample_type_traits.h"
 #include "liblamb/src/sample_type_interfaces/sample_type_interfaces.h"
@@ -28,17 +29,56 @@ uint16_t interval;
 ////////////////////////////////////////////////////////////////////////////////////
 
 void setup() {
-  interval = 254;
+  Serial.begin(57600);
+
+  interval = 200;
 
   setup_led();  
   setup_i2c();
   setup_voice();
   setup_audio();
-  setup_timers();
-  Serial.begin(57600);
+//  setup_timers();
 }
 
+
 void loop() {
-  fill_audio_buffer();
-  sequencer_tick();
-}
+  env.set_d_hz(2 << 4);
+      
+  for (uint16_t ix = 0; ix < 500; ix++) {
+    if ((ix % 250) == 0) {
+      env.trigger();
+      oscs[0].trigger();
+      oscs[1].trigger();
+    }
+
+    uint8_t tmp = env.read() >> 8; 
+     
+//    Serial.print("Step ");
+//    Serial.print(ix);
+    int8_t voice = VOICE.read() - 128;  
+    Serial.print(" ");
+    Serial.print(tmp >> 1);
+    Serial.print(" ");
+    uint8_t env_val = ~pgm_read_byte(lamb::Tables::qsin256_uint8_t::data+lamb::Tables::qsin256_uint8_t::length-tmp-1);
+    Serial.print( env_val >> 1 );
+
+    uint8_t lfo_tmp = lfo.read();
+    lfo_tmp = Math::mul_T1U8S<8>(env_val, 128 + (lfo_tmp>>1)); 
+    
+    int8_t amped = voice; 
+    amped = Math::mul_T1U8S<8>(amped, lfo_tmp); 
+//    amped = Math::mul_T1U8S<8>(amped, env_val); 
+    
+    Serial.print(" ");
+    Serial.print( amped );
+    Serial.print(" ");
+    Serial.print( lfo_tmp >> 1 );
+
+//    Serial.print(" ");
+//    Serial.print(voice);
+    Serial.println();
+        
+  }
+
+  while (true);
+} 

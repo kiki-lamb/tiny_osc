@@ -2,29 +2,19 @@
 volatile lamb::RingBuffer<uint8_t, 255> abuff;
 
 ISR(TIMER_ISR) {
-#ifdef STOP
-  static uint16_t stop_ix = 0;
-  if (stop_ix >= STOP)
-    return;
-  stop_ix +=1;
-#endif
-
-  sequencer_time++;
-  
   if (! abuff.readable())
     {}
   else {
+    #ifdef STOP
+      static uint16_t stop_ix = 0;
+      if (stop_ix >= STOP)
+        return;
+     stop_ix +=1;
+    #endif
+    
+    sequencer_time++;
     uint8_t tmp = abuff.read(); 
     PWM_PORT = tmp;
-    Serial.print(255);
-    Serial.print(" ");
-    Serial.print(sequencer_time);
-    Serial.print(" ");
-    Serial.print(interval);
-    Serial.print(" ");
-    Serial.print(128);
-    Serial.print(" ");
-    Serial.println(tmp);
   }
 }
 
@@ -42,6 +32,6 @@ void setup_audio() {
 #else
   DDRB |= _BV(3);
 #endif
-  while (fill_audio_buffer());
+//  while (fill_audio_buffer());
 }
   
