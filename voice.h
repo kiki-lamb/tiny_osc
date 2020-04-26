@@ -27,7 +27,11 @@ class Amplifier : public SampleProcessor<int8_t, int8_t> {
   virtual ~Amplifier() {};
 
   Amplifier(SampleSource<int8_t> * in) : 
-  ix(1), last_env(255), last_lfo(0) {
+  ix(1) 
+#ifdef AMP_ENABLE
+  , last_env(255), last_lfo(0) 
+#endif  
+  {
     connect(in);
   }
 

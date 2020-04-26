@@ -39,8 +39,10 @@ void soft_timer() {
   flip_led();
   
   static uint8_t iix = 0;
-  
-  //env.trigger();
+
+#ifdef AMP_ENABLE  
+  env.trigger();
+#endif
 
   uint8_t note = seq[iix >> 0] - 55;
 
@@ -50,7 +52,6 @@ void soft_timer() {
   iix ++;
   iix %= 16;
   
-//  Serial.println(note);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -61,7 +62,7 @@ void setup() {
   setup_voice();
   setup_audio();
   setup_timers();
-  Serial.begin(115200);
+  Serial.begin(57600);
 }
 
 void loop() {

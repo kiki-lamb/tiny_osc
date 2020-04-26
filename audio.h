@@ -10,6 +10,8 @@ ISR(TIMER_ISR) {
   else {
     uint8_t tmp = abuff.read(); 
     PWM_PORT = tmp;
+    Serial.print(255);
+    Serial.print(" ");
     Serial.println(tmp);
   }
 }
