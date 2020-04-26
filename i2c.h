@@ -1,5 +1,5 @@
 //#define USE_WIRE 1
-#include "D:/Code/liblamb/src/light_buffer/light_buffer.h"
+#include "liblamb/src/light_buffer/light_buffer.h"
 
 #ifdef USE_WIRE
 #include <TinyWireS.h>

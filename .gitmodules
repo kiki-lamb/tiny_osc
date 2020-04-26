@@ -1,0 +1,3 @@
+[submodule "liblamb"]
+	path = liblamb
+	url = http://github.com/kiki-lamb/liblamb

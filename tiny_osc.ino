@@ -1,16 +1,16 @@
-//#include "D:/Code/liblamb/src/lamb.h"
+//#include "liblamb/src/lamb.h"
 
 uint16_t interval;
 
 #define STOP 1500
 
-#include "D:/Code/liblamb/src/tables/kl_256_int8_t_sin.h"
-#include "D:/Code/liblamb/src/tables/kl_256_uint8_t_sin.h"
-#include "D:/Code/liblamb/src/ring_buffer/ring_buffer.h"
+#include "liblamb/src/tables/kl_256_int8_t_sin.h"
+#include "liblamb/src/tables/kl_256_uint8_t_sin.h"
+#include "liblamb/src/ring_buffer/ring_buffer.h"
 
 #include "led.h"
 #include "math.h"
-#include "sample_type_traits.h"
+#include "liblamb/src/sample_type_traits/sample_type_traits.h"
 #include "interfaces.h"
 #include "envelope.h"
 #include "timers.h"

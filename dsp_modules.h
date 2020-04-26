@@ -37,7 +37,7 @@ class UnityMix : public SampleSource<int8_t> {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template <typename input>
-class ConvertToUnsigned : public SampleProcessor<input, typename sample_type_traits<input>::unsigned_type> {
+class ConvertToUnsigned : public SampleProcessor<input, typename lamb::sample_type_traits<input>::unsigned_type> {
   public:
   inline virtual ~ConvertToUnsigned() {};
   
@@ -46,14 +46,14 @@ class ConvertToUnsigned : public SampleProcessor<input, typename sample_type_tra
   }
   
   inline virtual uint8_t process(input v) {
-    return sample_type_traits<input>::to_uint8_t(v);
+    return lamb::sample_type_traits<input>::to_uint8_t(v);
   }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template <typename input>
-class ConvertToSigned : public SampleProcessor<input, typename sample_type_traits<input>::signed_type> {
+class ConvertToSigned : public SampleProcessor<input, typename lamb::sample_type_traits<input>::signed_type> {
   public:
   inline virtual ~ConvertToSigned() {};
   
@@ -62,6 +62,6 @@ class ConvertToSigned : public SampleProcessor<input, typename sample_type_trait
   }
   
   inline virtual int8_t process(input v) {
-    return sample_type_traits<input>::to_int8_t(v);
+    return lamb::sample_type_traits<input>::to_int8_t(v);
   }
 };

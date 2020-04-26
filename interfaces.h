@@ -4,7 +4,7 @@ template <typename output_type_>
 class SampleSource { 
   public:
     typedef output_type_ output_type;
-    typedef sample_type_traits<output_type> traits;
+    typedef lamb::sample_type_traits<output_type> traits;
     virtual ~SampleSource() {};
     virtual output_type read() = 0;
 };
@@ -104,5 +104,3 @@ class CustomSampleProcessor : public SampleProcessor<input_type_, output_type_> 
     return (*func)(v);
   }
 };
-
-
