@@ -6,9 +6,9 @@ ISR(TIMER_ISR) {
   stime++;
   
   if (! abuff.readable())
-    LED_ON;
+    {}
   else {
-    auto tmp = abuff.read(); 
+    uint8_t tmp = abuff.read(); 
     PWM_PORT = tmp;
     Serial.println(tmp);
   }

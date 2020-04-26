@@ -40,7 +40,7 @@ void soft_timer() {
   
   static uint8_t iix = 0;
   
-  env.trigger();
+  //env.trigger();
 
   uint8_t note = seq[iix >> 0] - 55;
 
@@ -61,7 +61,7 @@ void setup() {
   setup_voice();
   setup_audio();
   setup_timers();
-  Serial.begin(57600);
+  Serial.begin(115200);
 }
 
 void loop() {

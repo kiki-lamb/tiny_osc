@@ -1,24 +1,28 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define VOICES 2
+#define VOICES 1
 #define KDIV 64
 
 typedef Oscillator<SRATE, int8_t> osc_type;
+#ifdef AMP_ENABLE
 typedef Oscillator<SRATE / KDIV, int8_t> lfo_type;
+lfo_type lfo;
 
 ADEnvelope<SRATE / KDIV > env;
+#endif
 
-osc_type oscs[VOICES];
-lfo_type lfo;
+osc_type oscs[4];
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class Amplifier : public SampleProcessor<int8_t, int8_t> {
   private:
   uint16_t ix;
+#ifdef AMP_ENABLE
   uint8_t last_env;
   uint8_t last_lfo;
-  
+#endif
+
   public:
   virtual ~Amplifier() {};
 
@@ -28,6 +32,7 @@ class Amplifier : public SampleProcessor<int8_t, int8_t> {
   }
 
   inline virtual int8_t process(int8_t v) {
+#ifdef AMP_ENABLE
     if (! ix) {
       last_env = env.read() >> 24;
       last_lfo = lfo_type::traits::to_uint8_t(lfo.read());
@@ -37,32 +42,40 @@ class Amplifier : public SampleProcessor<int8_t, int8_t> {
     ix++;
     ix %= KDIV;
 
-    return Math::mul_T1U8S<8>(v, last_env);
+    return Math::mul_T1U8S<8>(v, last_env); 
+#else
+    return v;
+#endif
   }
 };
 
 void setup_voice() {
-  lfo.set_hz(8, 0b00000000);
-  lfo.set_wave((lfo_type::waveform)3);
- 
   oscs[0].set_detune_hz(0b00000000);  
   oscs[1].set_detune_hz(0b00001100);
   
   oscs[0].octave = 0;
   oscs[1].octave = 1;
   
-  oscs[0].set_wave(osc_type::wf_square);
-  oscs[1].set_wave(osc_type::wf_square);
+  oscs[0].set_wave(osc_type::wf_sine);
+  oscs[1].set_wave(osc_type::wf_sine);
   
   oscs[0].set_note(48);
   oscs[1].set_note(48);
-  
+
+#ifdef AMP_ENABLE
   env.set_a_time(512);
   env.set_d_time(0b00000111);
+ 
+  lfo.set_hz(8, 0b00000000);
+  lfo.set_wave((lfo_type::waveform)3);
+ #endif
 }
 
 UnityMix mixer(&oscs[0], &oscs[1]); 
 Amplifier amp(&mixer);
+#ifdef AMP_ENABLE
 ConvertToUnsigned<int8_t> converter(&amp);
-
+#else
+ConvertToUnsigned<int8_t> converter(&oscs[0]);
+#endif
 #define VOICE converter
