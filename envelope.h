@@ -152,7 +152,7 @@ template <uint32_t srate, typename sample_type = uint16_t >
   
     inline virtual void trigger() {
       gate = true;
-      REnvelope<srate, sample_type>::trigger();
+      AREnvelope<srate, sample_type>::trigger();
     };
 
     inline virtual void stop() {
@@ -160,10 +160,19 @@ template <uint32_t srate, typename sample_type = uint16_t >
     };
 
   inline virtual sample_type read() {
-    if (gate)
+    if (AREnvelope<srate, sample_type>::attack_phacc > 0) {
+      
+      return AREnvelope<srate, sample_type>::read();
+    }
+    else if (gate) {
+
       return REnvelope<srate, sample_type>::maximum;
-    else
-      return REnvelope<srate, sample_type>::read();
+    }
+    else {
+      return AREnvelope<srate, sample_type>::read();
+    }
+
+    return 0;
   }
 };
 
