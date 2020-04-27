@@ -23,11 +23,11 @@ uint16_t interval;
 #include "sequencer.h"
 #include "audio.h"
 
-////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // NOTE: Tiny must be be fused for PLL clock, code must be compiled with -O3 or
 //       buffer underruns will occur. Use an RC filter (104 / 1000k) on the output
 //       pin.
-////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 void setup() {
   Serial.begin(57600);
@@ -42,14 +42,11 @@ void setup() {
 }
 
 void loop() {
-  env.set_d_hz(2 << 4);
-      
   for (uint16_t ix = 0; ix < 500; ix++) {
     if ((ix % 250) == 0) {
-      env.trigger();
-      oscs[0].trigger();
-      oscs[1].trigger();
+      instr.trigger();
     }
+
     uint8_t raw_env_val = env.read() >> 8; 
      
     int8_t voice = VOICE.read(); // - 128;  

@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 #define VOICES 1
 #define KDIV 64
@@ -6,43 +6,52 @@
 typedef Oscillator<SRATE, int8_t> osc_type;
 typedef Oscillator<SRATE, uint8_t> lfo_type;
 
-  lfo_type lfo;
-
-// ADEnvelope<SRATE / KDIV > env;
+lfo_type lfo;
 
 DEnvelope<SRATE> env;
 
 osc_type oscs[2];
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
-class Amplifier : public lamb::SampleProcessor<int8_t, int8_t> {
+class Instrument :
+  public lamb::SampleProcessor<int8_t, int8_t>,
+  public lamb::Triggerable
+{
   private:
   uint16_t ix;
   uint8_t last_env;
   uint8_t last_lfo;
 
   public:
-  virtual ~Amplifier() {};
+  virtual ~Instrument() {};
 
-  Amplifier(SampleSource<int8_t> * in) : 
+  Instrument(SampleSource<int8_t> * in) : 
   ix(1) 
   , last_env(255), last_lfo(0) 
   {
     connect(in);
   }
 
+  inline void trigger() {
+    env.trigger();
+    oscs[0].trigger();
+    oscs[1].trigger();
+  }
+  
   inline virtual int8_t process(int8_t v) {
-    if (! ix) {
-      last_env = env.read() >> 8;
-      last_lfo = lfo_type::traits::to_unsigned_type(lfo.read());
-      last_env = Math::mul_U8S<8>(last_env, (128 | (last_lfo >> 1)));
-    }
+    return v;
     
-    ix++;
-    ix %= KDIV;
-
-    return Math::mul_U8S<8>(v, last_env); 
+//    if (! ix) {
+//      last_env = env.read() >> 8;
+//      last_lfo = lfo_type::traits::to_unsigned_type(lfo.read());
+//      last_env = Math::mul_U8S<8>(last_env, (128 | (last_lfo >> 1)));
+//    }
+//    
+//    ix++;
+//    ix %= KDIV;
+//
+//    return Math::mul_U8S<8>(v, last_env); 
   }
 };
 
@@ -61,12 +70,13 @@ void setup_voice() {
 
 //  env.set_a_time(512);
 //  env.set_d_time(0b00000111);
- 
+  env.set_d_hz(2 << 4);
+  
   lfo.set_hz(8, 0b00000000);
   lfo.set_wave(lfo_type::wf_sine);
 }
 
 lamb::UnityMix<int8_t> mixer(&oscs[0], &oscs[1]); 
-Amplifier amp(&mixer);
-lamb::ConvertToUnsigned<int8_t> converter(&oscs[0]);
-#define VOICE oscs[0]
+Instrument instr(&mixer);
+// lamb::ConvertToUnsigned<int8_t> converter(&oscs[0]);
+#define VOICE instr
