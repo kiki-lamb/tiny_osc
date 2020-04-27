@@ -138,45 +138,6 @@ class AREnvelope : public REnvelope<srate, sample_type> {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// ASREnvelope
-////////////////////////////////////////////////////////////////////////////////
-
-template <uint32_t srate, typename sample_type = uint16_t >
-  class ASREnvelope : public AREnvelope<srate, sample_type>, public lamb::Stoppable {
-  public:
-    bool gate;
-  
-    inline ASREnvelope() : gate(false){}
-
-    inline virtual ~ASREnvelope() {}
-  
-    inline virtual void trigger() {
-      gate = true;
-      AREnvelope<srate, sample_type>::trigger();
-    };
-
-    inline virtual void stop() {
-      gate = false;
-    };
-
-  inline virtual sample_type read() {
-    if (AREnvelope<srate, sample_type>::attack_phacc > 0) {
-      
-      return AREnvelope<srate, sample_type>::read();
-    }
-    else if (gate) {
-
-      return REnvelope<srate, sample_type>::maximum;
-    }
-    else {
-      return AREnvelope<srate, sample_type>::read();
-    }
-
-    return 0;
-  }
-};
-
-////////////////////////////////////////////////////////////////////////////////
 // SmoothAREnvelope
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -196,6 +157,83 @@ class SmoothAREnvelope : public AREnvelope<srate, sample_type> {
       // ^ - REnvelope<srate>::decay; // why did I add this subtract??
       REnvelope<srate, sample_type>::trigger();
     }
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// ASREnvelope
+////////////////////////////////////////////////////////////////////////////////
+
+template <uint32_t srate, typename sample_type = uint16_t >
+  class ASREnvelope : public SmoothAREnvelope<srate, sample_type>, public lamb::Stoppable {
+  public:
+    bool gate;
+  
+    inline ASREnvelope() : gate(false){}
+
+    inline virtual ~ASREnvelope() {}
+  
+    inline virtual void trigger() {
+      gate = true;
+      SmoothAREnvelope<srate, sample_type>::trigger();
+    };
+
+    inline virtual void stop() {
+      gate = false;
+    };
+
+  inline virtual sample_type read() {
+    if (SmoothAREnvelope<srate, sample_type>::attack_phacc > 0) {
+      
+      return SmoothAREnvelope<srate, sample_type>::read();
+    }
+    else if (gate) {
+      return REnvelope<srate, sample_type>::maximum;
+    }
+    else {
+      return SmoothAREnvelope<srate, sample_type>::read();
+    }
+
+    return 0;
+  }
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+// ADSREnvelope
+////////////////////////////////////////////////////////////////////////////////
+
+template <uint32_t srate, typename sample_type = uint16_t >
+  class ADSREnvelope : public ASREnvelope<srate, sample_type>
+{
+private:
+  sample_type _sustain_level;
+public:
+  inline void set_sustain_level(sample_type value) {
+    _sustain_level = value;
+  }
+
+  inline sample_type set_sustain_level() {
+    // somehow set a phincr based on a decay hz?
+    return _sustain_level;
+  }
+
+  inline ADSREnvelope() {
+    set_sustain_level(REnvelope<srate, sample_type>::maximum);    
+  }
+
+  inline virtual ~ADSREnvelope() {}
+
+  inline virtual void trigger() {
+    ASREnvelope<srate, sample_type>::trigger();
+  }
+
+  inline virtual void stop() {
+    ASREnvelope<srate, sample_type>::stop();
+  };
+
+  inline virtual sample_type read() {
+    return ASREnvelope<srate, sample_type>::read();
+  }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
