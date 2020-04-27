@@ -58,14 +58,14 @@ void setup_voice() {
   oscs[0].set_detune_hz(0b00000000);  
   oscs[1].set_detune_hz(0b00001100);
   
-  oscs[0].octave = 4;
-  oscs[1].octave = 3;
+  oscs[0].octave = 2;
+  oscs[1].octave = 2;
   
   oscs[0].set_wave(osc_type::wf_sine);
   oscs[1].set_wave(osc_type::wf_sine);
   
-  oscs[0].set_note(72);
-  oscs[1].set_note(72);
+  oscs[0].set_note(60);
+  oscs[1].set_note(60);
 
 //  env.set_a_time(512);
 //  env.set_d_time(0b00000111);
@@ -74,7 +74,7 @@ void setup_voice() {
   lfo.set_wave(lfo_type::wf_sine);
 }
 
-lamb::UnityMix mixer(&oscs[0], &oscs[1]); 
+lamb::UnityMix<int8_t> mixer(&oscs[0], &oscs[1]); 
 Amplifier amp(&mixer);
 lamb::ConvertToUnsigned<int8_t> converter(&oscs[0]);
 #define VOICE converter

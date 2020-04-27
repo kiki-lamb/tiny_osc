@@ -65,6 +65,7 @@ void loop() {
     amped = Math::mul_T1U8S<8>(amped, lfo_tmp); 
 //    amped = Math::mul_T1U8S<8>(amped, env_val); 
     
+//    Serial.print(voice);  
     Serial.print(" ");
     Serial.print(tmp >> 1);
     Serial.print(" ");
@@ -82,6 +83,10 @@ void loop() {
     Serial.print(0);
     Serial.print(" ");
     Serial.print( - (lfo_tmp >> 1 ));
+    Serial.print(" ");
+    Serial.print(0);
+    Serial.print(" ");
+    Serial.print(voice);
 
 //    Serial.print(" ");
 //    Serial.print(voice);
