@@ -49,13 +49,31 @@ class REnvelope : public Envelope<srate, sample_type> {
     }
 
     inline virtual ~REnvelope() {}
+
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// SlopedREnvelope
+////////////////////////////////////////////////////////////////////////////////
+
+template <uint32_t srate, typename sample_type = uint16_t >
+  class SlopedREnvelope : public REnvelope<srate, sample_type> {
+public:
+  inline SlopedREnvelope() {}
+  inline virtual ~SlopedREnvelope() {}
+
+  inline typename REnvelope<srate, sample_type>::acc_type read() {
+    return REnvelope<srate, sample_type>::read();
+  } 
+
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // AREnvelope
 ////////////////////////////////////////////////////////////////////////////////
 
-template <uint32_t srate, typename sample_type = uint32_t >
+template <uint32_t srate, typename sample_type = uint16_t >
 class AREnvelope : public REnvelope<srate, sample_type> {
   public:
     typename REnvelope<srate>::acc_type attack;

@@ -20,7 +20,7 @@ public:
   
   osc_type oscs[2];
   
-  REnvelope<SRATE> env;
+  SlopedREnvelope<SRATE> env;
   
   lamb::UnityMix<int8_t> mixer;
 
