@@ -62,8 +62,9 @@ Instrument() : mixer(&oscs[0], &oscs[1])
 
     uint8_t lfo_tmp = lfo.read();
     lfo_tmp = Math::mul_U8S<8>(env_val, 192 + (lfo_tmp>>2)); 
-    
-    int8_t amped = mixer.read(); 
+
+    int8_t mix_val = mixer.read();
+    int8_t amped = mix_val;
     amped = Math::mul_U8S<8>(amped, lfo_tmp); 
 
     Serial.print(" ");
@@ -83,6 +84,9 @@ Instrument() : mixer(&oscs[0], &oscs[1])
     Serial.print(0);
     Serial.print(" ");
     Serial.print( - (lfo_tmp >> 1 ));
+
+    Serial.print(" ");
+    Serial.print(mix_val);
 
 
     Serial.println();
