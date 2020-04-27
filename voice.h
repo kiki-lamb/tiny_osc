@@ -27,9 +27,8 @@ class Instrument :
 
   virtual ~Instrument() {};
 
-  Instrument(SampleSource<int8_t> * in) : 
-  ix(1) 
-  , last_env(255), last_lfo(0) 
+  Instrument(SampleSource<int8_t> * in)
+  // : ix(1), last_env(255), last_lfo(0) 
   {
     connect(in);
   }
