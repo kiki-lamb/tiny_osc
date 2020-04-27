@@ -36,9 +36,8 @@ void setup() {
 
   setup_led();  
   setup_i2c();
-  setup_voice();
   setup_audio();
-//  setup_timers();
+  // setup_timers();
 }
 
 volatile int8_t force_output = 0;
@@ -46,7 +45,7 @@ volatile int8_t force_output = 0;
 void loop() {
   for (uint16_t ix = 0; ix < 500; ix++) {
     if ((ix % 250) == 0) {
-      instr.trigger();
+      VOICE.trigger();
     }
 
     force_output = VOICE.read(); // - 128;          
