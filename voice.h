@@ -19,25 +19,20 @@ osc_type oscs[2];
 class Amplifier : public lamb::SampleProcessor<int8_t, int8_t> {
   private:
   uint16_t ix;
-#ifdef AMP_ENABLE
   uint8_t last_env;
   uint8_t last_lfo;
-#endif
 
   public:
   virtual ~Amplifier() {};
 
   Amplifier(SampleSource<int8_t> * in) : 
   ix(1) 
-#ifdef AMP_ENABLE
   , last_env(255), last_lfo(0) 
-#endif  
   {
     connect(in);
   }
 
   inline virtual int8_t process(int8_t v) {
-#ifdef AMP_ENABLE
     if (! ix) {
       last_env = env.read() >> 24;
       last_lfo = lfo_type::traits::to_uint8_t(lfo.read());
@@ -48,9 +43,6 @@ class Amplifier : public lamb::SampleProcessor<int8_t, int8_t> {
     ix %= KDIV;
 
     return Math::mul_T1U8S<8>(v, last_env); 
-#else
-    return v;
-#endif
   }
 };
 

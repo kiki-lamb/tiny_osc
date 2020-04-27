@@ -14,9 +14,7 @@ void sequencer_tick() {
   
   static uint8_t iix = 0;
 
-//#ifdef AMP_ENABLE
-  env.trigger();
-//#endif
+//  env.trigger();
 
 //  uint8_t note = seq[iix >> 0] - 55;
 
