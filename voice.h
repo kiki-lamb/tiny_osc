@@ -23,7 +23,7 @@ public:
 
   // SlopedEnvelope<SmoothAREnvelope, SRATE> env;
   // SlopedEnvelope<REnvelope, SRATE> env;
-  SlopedEnvelope<ADSREnvelope, SRATE> env;
+  SlopedEnvelope<ASREnvelope, SRATE> env;
   
   lamb::UnityMix<int8_t> mixer;
 
@@ -41,8 +41,8 @@ Instrument() : mixer(&oscs[0], &oscs[1])
     oscs[1].set_note(60);
 
     env.set_a_hz(240);
-    env.set_d_hz(8);
-    env.set_sustain_level(200);
+//    env.set_d_hz(8);
+//  env.set_sustain_level(200);
     env.set_r_hz(4 << 4); 
   
     lfo.set_hz(16, 0b00000000);

@@ -45,13 +45,13 @@ void loop() {
   for (uint16_t ix = 0; ix < 500; ix++) {
     switch (ix) {
     case 0:
-//    case 100:
-//    case 300:
+    case 100:
+    case 300:
       VOICE.trigger();
       break;
-//    case 50:
+    case 50:
     case 150:
-//    case 350:
+    case 350:
       VOICE.stop();
       break;
     }

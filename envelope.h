@@ -217,15 +217,19 @@ public:
   }
 
   inline void set_d_hz (uint8_t hz_q4n4) {
-    Serial.print("Need to move from ");
-    Serial.print(REnvelope<srate, sample_type>::maximum);
-    Serial.print(" to ");
-    Serial.print(_sustain_level);
-    Serial.print(" in ");
-    Serial.print(hz_q4n4 >> 4);
-    Serial.print(" and ");
-    Serial.print(hz_q4n4 & 0b1111);
-    Serial.print("/16ths hz ");
+//    Serial.print("Need to move from ");
+//    Serial.print(REnvelope<srate, sample_type>::maximum);
+//    Serial.print(" to ");
+//    Serial.print(_sustain_level);
+//    Serial.print(" (");
+    Serial.print( REnvelope<srate, sample_type>::maximum - _sustain_level );
+//    Serial.print(") in ");
+//    Serial.print(hz_q4n4 >> 4);
+//    Serial.print(" and ");
+//    Serial.print(hz_q4n4 & 0b1111);
+//    Serial.println("/16ths hz.");
+    Serial.print(" ");
+    Serial.print(srate);
     Serial.println();
     decay_phincr = REnvelope<srate, sample_type>::hz_phincr * hz_q4n4 >> 4;
   }
