@@ -212,13 +212,23 @@ private:
   sample_type _sustain_level;
 public:
   inline void set_sustain_level(sample_type value) {
-    _sustain_level = value;
+    _sustain_level = value;    
+    _sustain_level = 16000;
   }
 
   inline void set_d_hz (uint8_t hz_q4n4) {
-    decay_phincr = REnvelope<srate, sample_type>::hz_phincr * hz_q4n4 >> 4;  
+    Serial.print("Need to move from ");
+    Serial.print(REnvelope<srate, sample_type>::maximum);
+    Serial.print(" to ");
+    Serial.print(_sustain_level);
+    Serial.print(" in ");
+    Serial.print(hz_q4n4 >> 4);
+    Serial.print(" and ");
+    Serial.print(hz_q4n4 & 0b1111);
+    Serial.print("/16ths hz ");
+    Serial.println();
+    decay_phincr = REnvelope<srate, sample_type>::hz_phincr * hz_q4n4 >> 4;
   }
-
 
   inline sample_type sustain_level() {
     // somehow set a phincr based on a decay hz?
@@ -243,12 +253,12 @@ public:
 
   inline virtual sample_type read() {
     if (SmoothAREnvelope<srate, sample_type>::attack_phacc > 0) {
-      // Serial.println("1");
+      Serial.print("1 ");
 
       return SmoothAREnvelope<srate, sample_type>::read();
     }
     else if (decay_phacc > 0) {
-      // Serial.println("2");
+      Serial.print("2");
 
       if (decay_phacc < decay_phincr) {
         decay_phacc = 0;
@@ -261,12 +271,12 @@ public:
       return REnvelope<srate, sample_type>::amplitude;
     }
     else if (ASREnvelope<srate, sample_type>::gate) {
-      // Serial.println("3");
+      Serial.print("3 ");
 
       return _sustain_level;
     }
     else {
-      // Serial.println("4");
+      Serial.print("4 ");
 
       return SmoothAREnvelope<srate, sample_type>::read();
     }

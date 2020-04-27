@@ -41,8 +41,8 @@ Instrument() : mixer(&oscs[0], &oscs[1])
     oscs[1].set_note(60);
 
     env.set_a_hz(240);
-    env.set_d_hz(240);
-    env.set_sustain_level(env.sustain_level() >> 1);
+    env.set_d_hz(8);
+    env.set_sustain_level(200);
     env.set_r_hz(4 << 4); 
   
     lfo.set_hz(16, 0b00000000);
@@ -66,19 +66,19 @@ Instrument() : mixer(&oscs[0], &oscs[1])
   inline virtual int8_t read() {
     uint8_t env_val = env.read() >> 8; 
      
-    uint8_t lfo_tmp = lfo.read();
-    lfo_tmp = Math::mul_U8S<8>(env_val, 192 + (lfo_tmp>>2)); 
+    // uint8_t lfo_tmp = lfo.read();
+    // lfo_tmp = Math::mul_U8S<8>(env_val, 192 + (lfo_tmp>>2)); 
 
     int8_t mix_val = mixer.read();
     int8_t amped = mix_val;
-    amped = Math::mul_U8S<8>(amped, lfo_tmp); 
+    amped = Math::mul_U8S<8>(amped, env_val); 
 
     Serial.print(" ");
     Serial.print( env_val >> 1 );
     Serial.print(" ");
     Serial.print( amped );
     Serial.print(" ");
-    Serial.print( lfo_tmp >> 1 );
+    Serial.print( 0 ); // lfo_tmp >> 1 );
 
     Serial.print(" ");
     Serial.print( 0 );
@@ -87,7 +87,7 @@ Instrument() : mixer(&oscs[0], &oscs[1])
     Serial.print(" ");
     Serial.print(0);
     Serial.print(" ");
-    Serial.print( - (lfo_tmp >> 1 ));
+    Serial.print( - ( 0 )) ; // lfo_tmp >> 1 ));
 
     Serial.print(" ");
     Serial.print(mix_val);
