@@ -51,24 +51,19 @@ void loop() {
       oscs[0].trigger();
       oscs[1].trigger();
     }
-
-    uint8_t tmp = env.read() >> 8; 
+    uint8_t raw_env_val = env.read() >> 8; 
      
-//    Serial.print("Step ");
-//    Serial.print(ix);
-    int8_t voice = VOICE.read() - 128;  
-    uint8_t env_val = ~pgm_read_byte(lamb::Tables::qsin256_uint8_t::data+lamb::Tables::qsin256_uint8_t::length-tmp-1);
+    int8_t voice = VOICE.read(); // - 128;  
+    uint8_t env_val = ~pgm_read_byte(lamb::Tables::qsin256_uint8_t::data+lamb::Tables::qsin256_uint8_t::length-raw_env_val-1);
 
     uint8_t lfo_tmp = lfo.read();
-    lfo_tmp = Math::mul_T1U8S<8>(env_val, 192 + (lfo_tmp>>2)); 
+    lfo_tmp = Math::mul_U8S<8>(env_val, 192 + (lfo_tmp>>2)); 
     
     int8_t amped = voice; 
-    amped = Math::mul_T1U8S<8>(amped, lfo_tmp); 
-//    amped = Math::mul_T1U8S<8>(amped, env_val); 
-    
-//    Serial.print(voice);  
+    amped = Math::mul_U8S<8>(amped, lfo_tmp); 
+
     Serial.print(" ");
-    Serial.print(tmp >> 1);
+    Serial.print(raw_env_val >> 1);
     Serial.print(" ");
     Serial.print( env_val >> 1 );
     Serial.print(" ");
@@ -77,7 +72,7 @@ void loop() {
     Serial.print( lfo_tmp >> 1 );
 
     Serial.print(" ");
-    Serial.print(- (tmp >> 1));
+    Serial.print(- (raw_env_val >> 1));
     Serial.print(" ");
     Serial.print( - (env_val >> 1 ));
     Serial.print(" ");

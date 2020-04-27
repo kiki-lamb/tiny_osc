@@ -36,13 +36,13 @@ class Amplifier : public lamb::SampleProcessor<int8_t, int8_t> {
     if (! ix) {
       last_env = env.read() >> 8;
       last_lfo = lfo_type::traits::to_unsigned_type(lfo.read());
-      last_env = Math::mul_T1U8S<8>(last_env, (128 | (last_lfo >> 1)));
+      last_env = Math::mul_U8S<8>(last_env, (128 | (last_lfo >> 1)));
     }
     
     ix++;
     ix %= KDIV;
 
-    return Math::mul_T1U8S<8>(v, last_env); 
+    return Math::mul_U8S<8>(v, last_env); 
   }
 };
 
@@ -69,4 +69,4 @@ void setup_voice() {
 lamb::UnityMix<int8_t> mixer(&oscs[0], &oscs[1]); 
 Amplifier amp(&mixer);
 lamb::ConvertToUnsigned<int8_t> converter(&oscs[0]);
-#define VOICE converter
+#define VOICE oscs[0]
