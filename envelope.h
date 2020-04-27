@@ -198,7 +198,6 @@ template <uint32_t srate, typename sample_type = uint16_t >
   }
 };
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // ADSREnvelope
 ////////////////////////////////////////////////////////////////////////////////
@@ -206,12 +205,20 @@ template <uint32_t srate, typename sample_type = uint16_t >
 template <uint32_t srate, typename sample_type = uint16_t >
   class ADSREnvelope : public ASREnvelope<srate, sample_type>
 {
+  typename REnvelope<srate, sample_type>::acc_type decay_phincr;
+  typename REnvelope<srate, sample_type>::acc_type decay_phacc;
+  
 private:
   sample_type _sustain_level;
 public:
   inline void set_sustain_level(sample_type value) {
     _sustain_level = value;
   }
+
+  inline void set_d_hz (uint8_t hz_q4n4) {
+    decay_phincr = REnvelope<srate, sample_type>::hz_phincr * hz_q4n4 >> 4;  
+  }
+
 
   inline sample_type sustain_level() {
     // somehow set a phincr based on a decay hz?
@@ -225,6 +232,8 @@ public:
   inline virtual ~ADSREnvelope() {}
 
   inline virtual void trigger() {
+    decay_phacc = REnvelope<srate, sample_type>::maximum;
+    
     ASREnvelope<srate, sample_type>::trigger();
   }
 
@@ -233,7 +242,29 @@ public:
   };
 
   inline virtual sample_type read() {
-    return ASREnvelope<srate, sample_type>::read();
+    if (SmoothAREnvelope<srate, sample_type>::attack_phacc > 0) {
+      
+      return SmoothAREnvelope<srate, sample_type>::read();
+    }
+    else if (decay_phacc > 0) {
+      if (decay_phacc < decay_phincr) {
+        decay_phacc = 0;
+      }
+      else
+        decay_phacc -= decay_phincr;
+
+      REnvelope<srate, sample_type>::amplitude = decay_phacc;
+      
+      return REnvelope<srate, sample_type>::amplitude;
+    }
+    else if (ASREnvelope<srate, sample_type>::gate) {
+      return REnvelope<srate, sample_type>::maximum;
+    }
+    else {
+      return SmoothAREnvelope<srate, sample_type>::read();
+    }
+
+    return 0;
   }
 };
 
