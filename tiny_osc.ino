@@ -47,10 +47,16 @@ void loop() {
       instr.trigger();
     }
 
+    int8_t voice = VOICE.read(); // - 128;  
+
     uint8_t raw_env_val = env.read() >> 8; 
      
-    int8_t voice = VOICE.read(); // - 128;  
-    uint8_t env_val = ~pgm_read_byte(lamb::Tables::qsin256_uint8_t::data+lamb::Tables::qsin256_uint8_t::length-raw_env_val-1);
+    uint8_t env_val = ~pgm_read_byte(
+      lamb::Tables::qsin256_uint8_t::data +
+      lamb::Tables::qsin256_uint8_t::length -
+      raw_env_val -
+      1
+    );
 
     uint8_t lfo_tmp = lfo.read();
     lfo_tmp = Math::mul_U8S<8>(env_val, 192 + (lfo_tmp>>2)); 

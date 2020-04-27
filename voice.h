@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
-#define VOICES 1
+#define VOICES 2
 #define KDIV 64
 
 typedef Oscillator<SRATE, int8_t> osc_type;
@@ -57,7 +57,7 @@ class Instrument :
 
 void setup_voice() {
   oscs[0].set_detune_hz(0b00000000);  
-  oscs[1].set_detune_hz(0b00001100);
+  oscs[1].set_detune_hz(0b00000000);
   
   oscs[0].octave = 2;
   oscs[1].octave = 2;
