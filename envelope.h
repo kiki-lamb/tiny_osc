@@ -25,32 +25,33 @@ class REnvelope : public Envelope<srate, sample_type> {
     static const acc_type hz_phincr = maximum / srate;
 
     acc_type amplitude;
-    acc_type decay_incr;
+    acc_type release_phincr;
     
     inline REnvelope() : 
       amplitude(0),
-      decay_incr(hz_phincr) {}
+      release_phincr(hz_phincr) {}
 
     virtual inline void trigger() {
       amplitude = maximum;
     }
+  
   // v Test this? I forget if it works.
-  inline void set_d_time (uint8_t seconds_q4n4) {
+  inline void set_r_time (uint8_t seconds_q4n4) {
     if (seconds_q4n4 == 0)
-        decay_incr = maximum;
+        release_phincr = maximum;
       else
-        set_d_hz(seconds_q4n4 == 1 ? 255 : (256 / seconds_q4n4));
+        set_r_hz(seconds_q4n4 == 1 ? 255 : (256 / seconds_q4n4));
     }
 
-    inline void set_d_hz (uint8_t hz_q4n4) {
-      decay_incr = hz_phincr * hz_q4n4 >> 4;  
+    inline void set_r_hz (uint8_t hz_q4n4) {
+      release_phincr = hz_phincr * hz_q4n4 >> 4;  
     }
 
     inline virtual ~REnvelope() {}
 
 
     virtual inline acc_type read() {
-      amplitude = (amplitude < decay_incr) ? 0 : amplitude - decay_incr;
+      amplitude = (amplitude < release_phincr) ? 0 : amplitude - release_phincr;
       
 //      Serial.print("Env reads: ");
 //      Serial.println(amplitude);
@@ -212,7 +213,7 @@ public:
     _sustain_level = value;
   }
 
-  inline sample_type set_sustain_level() {
+  inline sample_type sustain_level() {
     // somehow set a phincr based on a decay hz?
     return _sustain_level;
   }
