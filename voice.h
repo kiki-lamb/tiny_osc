@@ -1,5 +1,3 @@
-#include "liblamb/src/tables/kl_256_uint8_t_qsin.h"
-
 ////////////////////////////////////////////////////////////////////////////////
 
 #define VOICES 2
@@ -52,15 +50,8 @@ Instrument() : mixer(&oscs[0], &oscs[1])
   }
   
   inline virtual int8_t read() {
-    uint8_t raw_env_val = env.read() >> 8; 
+    uint8_t env_val = env.read(); // >> 8; 
      
-    uint8_t env_val = ~pgm_read_byte(
-      lamb::Tables::qsin256_uint8_t::data +
-      lamb::Tables::qsin256_uint8_t::length -
-      raw_env_val -
-      1
-    );
-
     uint8_t lfo_tmp = lfo.read();
     lfo_tmp = Math::mul_U8S<8>(env_val, 192 + (lfo_tmp>>2)); 
 
@@ -69,8 +60,6 @@ Instrument() : mixer(&oscs[0], &oscs[1])
     amped = Math::mul_U8S<8>(amped, lfo_tmp); 
 
     Serial.print(" ");
-    Serial.print(raw_env_val >> 1);
-    Serial.print(" ");
     Serial.print( env_val >> 1 );
     Serial.print(" ");
     Serial.print( amped );
@@ -78,7 +67,7 @@ Instrument() : mixer(&oscs[0], &oscs[1])
     Serial.print( lfo_tmp >> 1 );
 
     Serial.print(" ");
-    Serial.print(- (raw_env_val >> 1));
+    Serial.print( 0 );
     Serial.print(" ");
     Serial.print( - (env_val >> 1 ));
     Serial.print(" ");

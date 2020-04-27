@@ -1,3 +1,5 @@
+#include "liblamb/src/tables/kl_256_uint8_t_qsin.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 // Envelope
 ////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +65,16 @@ public:
   inline virtual ~SlopedREnvelope() {}
 
   inline typename REnvelope<srate, sample_type>::acc_type read() {
-    return REnvelope<srate, sample_type>::read();
+    typename REnvelope<srate, sample_type>::acc_type tmp =
+      REnvelope<srate, sample_type>::read();
+    
+    return ~pgm_read_byte(
+      lamb::Tables::qsin256_uint8_t::data +
+      lamb::Tables::qsin256_uint8_t::length -
+      (tmp >> 8)-
+      1
+    );
+    
   } 
 
 };
