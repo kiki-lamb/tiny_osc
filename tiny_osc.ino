@@ -40,9 +40,11 @@ void setup() {
 volatile int8_t force_output = 0;
 
 void loop() {
+  // VOICE.trigger();
+  
   for (uint16_t ix = 0; ix < 500; ix++) {
-    if ((ix % 250) == 0)
-      VOICE.trigger();
+     if ((ix % 250) == 0)
+       VOICE.trigger();
 
     force_output = VOICE.read();
   }

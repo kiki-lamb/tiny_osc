@@ -18,8 +18,9 @@ public:
   
   osc_type oscs[2];
   
-  // SlopedREnvelope<SRATE> env;
-  REnvelope<SRATE> env;
+  // cSlopedREnvelope<SRATE> env;
+  // AREnvelope<SRATE> env;
+  SlopedEnvelope<AREnvelope, SRATE> env;
   
   lamb::UnityMix<int8_t> mixer;
 
@@ -37,7 +38,9 @@ Instrument() : mixer(&oscs[0], &oscs[1])
     oscs[0].set_note(60);
     oscs[1].set_note(60);
 
+    env.set_a_hz(1 << 4);
     env.set_d_hz(2 << 4);
+    
   
     lfo.set_hz(8, 0b00000000);
     lfo.set_wave(lfo_type::wf_sine);

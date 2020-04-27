@@ -59,20 +59,24 @@ class REnvelope : public Envelope<srate, sample_type> {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// SlopedREnvelope
+// SlopedEnvelope
 ////////////////////////////////////////////////////////////////////////////////
 
-template <uint32_t srate, typename sample_type = uint16_t >
-  class SlopedREnvelope : public REnvelope<srate, sample_type> {
+template <
+  template<uint32_t, typename> typename template_t,
+  uint32_t srate,
+  typename sample_type = uint16_t
+>
+  class SlopedEnvelope : public template_t<srate, sample_type> {
 public:
-  inline SlopedREnvelope() {}
-  inline virtual ~SlopedREnvelope() {}
+  inline SlopedEnvelope() {}
+  inline virtual ~SlopedEnvelope() {}
 
-  inline typename REnvelope<srate, sample_type>::acc_type read() {
-    typename REnvelope<srate, sample_type>::acc_type tmp =
-      REnvelope<srate, sample_type>::read();
+  inline typename template_t<srate, sample_type>::acc_type read() {
+    typename template_t<srate, sample_type>::acc_type tmp =
+      template_t<srate, sample_type>::read();
 
-    typename REnvelope<srate, sample_type>::acc_type tmp2 = ~pgm_read_byte(
+    typename template_t<srate, sample_type>::acc_type tmp2 = ~pgm_read_byte(
       lamb::Tables::qsin256_uint8_t::data +
       lamb::Tables::qsin256_uint8_t::length -
       (tmp >> 8)-
