@@ -18,7 +18,8 @@ public:
   
   osc_type oscs[2];
   
-  SlopedREnvelope<SRATE> env;
+  // SlopedREnvelope<SRATE> env;
+  REnvelope<SRATE> env;
   
   lamb::UnityMix<int8_t> mixer;
 
@@ -50,7 +51,7 @@ Instrument() : mixer(&oscs[0], &oscs[1])
   }
   
   inline virtual int8_t read() {
-    uint8_t env_val = env.read(); // >> 8; 
+    uint8_t env_val = env.read() >> 8; 
      
     uint8_t lfo_tmp = lfo.read();
     lfo_tmp = Math::mul_U8S<8>(env_val, 192 + (lfo_tmp>>2)); 

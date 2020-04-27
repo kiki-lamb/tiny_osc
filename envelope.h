@@ -33,11 +33,6 @@ class REnvelope : public Envelope<srate, sample_type> {
     virtual inline void trigger() {
       amplitude = maximum;
     }
-
-    virtual inline acc_type read() {
-      return amplitude = (amplitude < decay_incr) ? 0 : amplitude - decay_incr;
-    }
-    
   // v Test this? I forget if it works.
   inline void set_d_time (uint8_t seconds_q4n4) {
     if (seconds_q4n4 == 0)
@@ -52,6 +47,15 @@ class REnvelope : public Envelope<srate, sample_type> {
 
     inline virtual ~REnvelope() {}
 
+
+    virtual inline acc_type read() {
+      amplitude = (amplitude < decay_incr) ? 0 : amplitude - decay_incr;
+      
+//      Serial.print("Env reads: ");
+//      Serial.println(amplitude);
+
+      return amplitude;
+    }    
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -67,18 +71,20 @@ public:
   inline typename REnvelope<srate, sample_type>::acc_type read() {
     typename REnvelope<srate, sample_type>::acc_type tmp =
       REnvelope<srate, sample_type>::read();
-    
-    return ~pgm_read_byte(
+
+    typename REnvelope<srate, sample_type>::acc_type tmp2 = ~pgm_read_byte(
       lamb::Tables::qsin256_uint8_t::data +
       lamb::Tables::qsin256_uint8_t::length -
       (tmp >> 8)-
       1
     );
     
+    /* Serial.print("SlopeEnv reads: "); */
+    /* Serial.println(tmp2); */
+    
+    return tmp2 << 8;
   } 
-
 };
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // AREnvelope
