@@ -243,10 +243,13 @@ public:
 
   inline virtual sample_type read() {
     if (SmoothAREnvelope<srate, sample_type>::attack_phacc > 0) {
-      
+      // Serial.println("1");
+
       return SmoothAREnvelope<srate, sample_type>::read();
     }
     else if (decay_phacc > 0) {
+      // Serial.println("2");
+
       if (decay_phacc < decay_phincr) {
         decay_phacc = 0;
       }
@@ -258,9 +261,13 @@ public:
       return REnvelope<srate, sample_type>::amplitude;
     }
     else if (ASREnvelope<srate, sample_type>::gate) {
-      return REnvelope<srate, sample_type>::maximum;
+      // Serial.println("3");
+
+      return _sustain_level;
     }
     else {
+      // Serial.println("4");
+
       return SmoothAREnvelope<srate, sample_type>::read();
     }
 
