@@ -1,3 +1,5 @@
+#include "liblamb/src/tables/kl_256_uint8_t_qsin.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 
 #define VOICES 2
@@ -18,15 +20,14 @@ public:
   
   osc_type oscs[2];
   
-  DEnvelope<SRATE> env;
-
+  REnvelope<SRATE> env;
+  
   lamb::UnityMix<int8_t> mixer;
 
 
   virtual ~Instrument() {};
-
+  
 Instrument() : mixer(&oscs[0], &oscs[1])
-    // : ix(1), last_env(255), last_lfo(0)
   {
     oscs[0].octave = 2;
     oscs[1].octave = 2;

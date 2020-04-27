@@ -4,7 +4,6 @@ uint16_t interval;
 
 #include "liblamb/src/tables/kl_256_int8_t_sin.h"
 #include "liblamb/src/tables/kl_256_uint8_t_sin.h"
-#include "liblamb/src/tables/kl_256_uint8_t_qsin.h"
 #include "liblamb/src/ring_buffer/ring_buffer.h"
 #include "liblamb/src/sample_type_traits/sample_type_traits.h"
 #include "liblamb/src/sample_type_interfaces/sample_type_interfaces.h"
@@ -39,8 +38,6 @@ void setup() {
 }
 
 volatile int8_t force_output = 0;
-
-lamb::Gate<int8_t> gate;
 
 void loop() {
   for (uint16_t ix = 0; ix < 500; ix++) {
