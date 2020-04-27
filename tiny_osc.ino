@@ -48,6 +48,12 @@ void loop() {
     case 100:
     case 300:
       VOICE.trigger();
+      break;
+    case 50:
+    case 150:
+    case 350:
+      VOICE.stop();
+      break;
     }
 
     force_output = VOICE.read();

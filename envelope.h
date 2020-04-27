@@ -1,12 +1,14 @@
 #include "liblamb/src/tables/kl_256_uint8_t_qsin.h"
 
+// Sample types are expected to be unsigned. Signed types have not been considered
+// and so may behave unpredictably.
+
 ////////////////////////////////////////////////////////////////////////////////
 // Envelope
 ////////////////////////////////////////////////////////////////////////////////
 
-// sample_type should be an unsigned integer type.
 template <uint32_t srate, typename sample_type = uint16_t >
-  class Envelope : public lamb::SampleSource<sample_type>, lamb::Triggerable {
+  class Envelope : public lamb::SampleSource<sample_type>, public lamb::Triggerable {
   public:
   inline virtual ~Envelope() {};
 };
@@ -15,7 +17,6 @@ template <uint32_t srate, typename sample_type = uint16_t >
 // REnvelope
 ////////////////////////////////////////////////////////////////////////////////
 
-// sample_type should be an unsigned integer type.
 template <uint32_t srate, typename sample_type = uint16_t >
 class REnvelope : public Envelope<srate, sample_type> {
   public:
@@ -56,6 +57,36 @@ class REnvelope : public Envelope<srate, sample_type> {
 
       return amplitude;
     }    
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// SREnvelope
+////////////////////////////////////////////////////////////////////////////////
+
+template <uint32_t srate, typename sample_type = uint16_t >
+  class SREnvelope : public REnvelope<srate, sample_type>, public lamb::Stoppable {
+  public:
+    bool gate;
+  
+    inline SREnvelope() : gate(false){}
+
+    inline virtual ~SREnvelope() {}
+  
+    inline virtual void trigger() {
+      gate = true;
+      REnvelope<srate, sample_type>::trigger();
+    };
+
+    inline virtual void stop() {
+      gate = false;
+    };
+
+  inline virtual sample_type read() {
+    if (gate)
+      return REnvelope<srate, sample_type>::maximum;
+    else
+      return REnvelope<srate, sample_type>::read();
+  }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
