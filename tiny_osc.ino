@@ -40,29 +40,26 @@ void setup() {
 
 volatile int8_t forced_output = 0;
 
-lamb::Gate<int8_t> gate;
+// lamb::Gate<int8_t> gate;
 
 void loop() {
   for (uint16_t ix = 0; ix < 500; ix++) {
-    // if ((ix % 250) == 0)
-    // VOICE.trigger();
+    // if (ix == 100)
+    //   gate.open();
 
-    if (ix == 100)
-      gate.open();
+    // if (ix == 400)
+    //   gate.close();
 
-    if (ix == 400)
-      gate.close();
-
-    if (ix == 450)
-      gate.open();
+    // if (ix == 450)
+    //   gate.open();
     
-    if (ix == 475)
-      gate.close();
+    // if (ix == 475)
+    //   gate.close();
     
-    // forced_output = VOICE.read();
-    forced_output = gate.read();
+    forced_output = VOICE.read();
     
-    Serial.println(forced_output);
+    // forced_output = gate.read();    
+    // Serial.println(forced_output);
   }
 
   while (true);
