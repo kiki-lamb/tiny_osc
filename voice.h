@@ -20,7 +20,9 @@ public:
   
   // cSlopedREnvelope<SRATE> env;
   // AREnvelope<SRATE> env;
+
   SlopedEnvelope<SmoothAREnvelope, SRATE>env;
+  //SmoothAREnvelope<SRATE> env;
   
   lamb::UnityMix<int8_t> mixer;
 
@@ -38,18 +40,21 @@ Instrument() : mixer(&oscs[0], &oscs[1])
     oscs[0].set_note(60);
     oscs[1].set_note(60);
 
-    env.set_a_hz(1 << 4);
-    env.set_d_hz(2 << 4); 
+    env.set_a_hz(2 << 4);
+    env.set_d_hz(4 << 4); 
   
-    lfo.set_hz(8, 0b00000000);
+    lfo.set_hz(16, 0b00000000);
     lfo.set_wave(lfo_type::wf_sine);
     
   }
 
   inline void trigger() {
+    if (env.amplitude == 0) {
+      oscs[0].trigger();
+      oscs[1].trigger();
+    }
+
     env.trigger();
-    oscs[0].trigger();
-    oscs[1].trigger();
   }
   
   inline virtual int8_t read() {

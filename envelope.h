@@ -108,14 +108,19 @@ class AREnvelope : public REnvelope<srate, sample_type> {
 
     virtual inline void trigger() {
       attack_phacc = REnvelope<srate, sample_type>::maximum;
-      // ^ - REnvelope<srate>::decay; // why did I add this subtract??
-      REnvelope<srate>::trigger();
     }
 
     virtual inline typename REnvelope<srate, sample_type>::acc_type read() {
       if (attack_phacc > 0) {
-        attack_phacc = attack_phacc < attack_phincr ? 0 : attack_phacc - attack_phincr;
-        return ~attack_phacc;
+        if (attack_phacc < attack_phincr) {
+          attack_phacc = 0;
+          REnvelope<srate>::trigger();          
+        }
+        else
+          attack_phacc -= attack_phincr;
+
+        REnvelope<srate, sample_type>::amplitude = ~attack_phacc;
+        return REnvelope<srate, sample_type>::amplitude;
       }
       else 
         return REnvelope<srate, sample_type>::read();
@@ -146,7 +151,7 @@ class SmoothAREnvelope : public AREnvelope<srate, sample_type> {
 
     virtual inline void trigger() {
       if (REnvelope<srate, sample_type>::amplitude > 0)
-        AREnvelope<srate, sample_type>::attack_phacc = REnvelope<srate, sample_type>::amplitude;
+        AREnvelope<srate, sample_type>::attack_phacc = ~REnvelope<srate, sample_type>::amplitude;
       else
         AREnvelope<srate, sample_type>::attack_phacc = REnvelope<srate, sample_type>::maximum;
       

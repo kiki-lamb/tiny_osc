@@ -43,8 +43,12 @@ void loop() {
   // VOICE.trigger();
   
   for (uint16_t ix = 0; ix < 500; ix++) {
-     if ((ix % 250) == 0)
-       VOICE.trigger();
+    switch (ix) {
+    case 0:
+    case 100:
+    case 300:
+      VOICE.trigger();
+    }
 
     force_output = VOICE.read();
   }
