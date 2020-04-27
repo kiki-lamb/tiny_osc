@@ -34,8 +34,8 @@ class Amplifier : public lamb::SampleProcessor<int8_t, int8_t> {
 
   inline virtual int8_t process(int8_t v) {
     if (! ix) {
-      last_env = env.read() >> 24;
-      last_lfo = lfo_type::traits::to_uint8_t(lfo.read());
+      last_env = env.read() >> 8;
+      last_lfo = lfo_type::traits::to_unsigned_type(lfo.read());
       last_env = Math::mul_T1U8S<8>(last_env, (128 | (last_lfo >> 1)));
     }
     

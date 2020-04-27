@@ -11,6 +11,7 @@ uint16_t interval;
 #include "liblamb/src/sample_type_traits/sample_type_traits.h"
 #include "liblamb/src/sample_type_interfaces/sample_type_interfaces.h"
 #include "liblamb/src/dsp/dsp.h"
+#include "liblamb/src/sample_sources/gate.h"
 
 #include "led.h"
 #include "math.h"
