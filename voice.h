@@ -20,7 +20,7 @@ public:
   
   // cSlopedREnvelope<SRATE> env;
   // AREnvelope<SRATE> env;
-  SlopedEnvelope<AREnvelope, SRATE>env;
+  SlopedEnvelope<SmoothAREnvelope, SRATE>env;
   
   lamb::UnityMix<int8_t> mixer;
 
@@ -29,8 +29,8 @@ public:
   
 Instrument() : mixer(&oscs[0], &oscs[1])
   {
-    oscs[0].octave = 2;
-    oscs[1].octave = 2;
+    oscs[0].octave = 3;
+    oscs[1].octave = 3;
   
     oscs[0].set_wave(osc_type::wf_sine);
     oscs[1].set_wave(osc_type::wf_sine);

@@ -132,3 +132,50 @@ class AREnvelope : public REnvelope<srate, sample_type> {
       attack_incr = REnvelope<srate, sample_type>::hz_phincr * hz_q14n2 >> 2;
     }
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// SmoothAREnvelope
+////////////////////////////////////////////////////////////////////////////////
+
+template <uint32_t srate, typename sample_type = uint16_t >
+class SmoothAREnvelope : public REnvelope<srate, sample_type> {
+  public:
+    typename REnvelope<srate, sample_type>::acc_type attack;
+    typename REnvelope<srate, sample_type>::acc_type attack_incr;
+    
+    inline virtual ~SmoothAREnvelope() {}
+
+    inline SmoothAREnvelope() : 
+      attack(0),
+      attack_incr(REnvelope<srate, sample_type>::maximum) {}
+
+    virtual inline void trigger() {
+      if (REnvelope<srate, sample_type>::amplitude > 0)
+        attack = REnvelope<srate, sample_type>::amplitude;
+      else
+        attack = REnvelope<srate, sample_type>::maximum;
+      
+      // ^ - REnvelope<srate>::decay; // why did I add this subtract??
+      REnvelope<srate, sample_type>::trigger();
+    }
+
+    virtual inline typename REnvelope<srate, sample_type>::acc_type read() {
+      if (attack > 0) {
+        attack = attack < attack_incr ? 0 : attack - attack_incr;
+        return ~attack;
+      }
+      else 
+        return REnvelope<srate, sample_type>::read();
+    }
+    
+    inline void set_a_time (uint16_t seconds_q2n14) {
+      if (seconds_q2n14 == 0)
+        attack_incr = REnvelope<srate, sample_type>::maximum;
+      else
+        set_a_hz(seconds_q2n14 == 1 ? 65535 : (65536/seconds_q2n14));
+    }
+
+    inline void set_a_hz (uint16_t hz_q14n2) {
+      attack_incr = REnvelope<srate, sample_type>::hz_phincr * hz_q14n2 >> 2;
+    }
+};
