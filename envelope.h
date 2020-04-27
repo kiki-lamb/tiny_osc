@@ -90,38 +90,6 @@ template <uint32_t srate, typename sample_type = uint16_t >
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// SlopedEnvelope
-////////////////////////////////////////////////////////////////////////////////
-
-template <
-  template<uint32_t, typename> typename template_t,
-  uint32_t srate,
-  typename sample_type = uint16_t
->
-  class SlopedEnvelope : public template_t<srate, sample_type> {
-public:
-  inline SlopedEnvelope() {}
-  inline virtual ~SlopedEnvelope() {}
-
-  inline typename template_t<srate, sample_type>::acc_type read() {
-    typename template_t<srate, sample_type>::acc_type tmp =
-      template_t<srate, sample_type>::read();
-
-    typename template_t<srate, sample_type>::acc_type tmp2 = ~pgm_read_byte(
-      lamb::Tables::qsin256_uint8_t::data +
-      lamb::Tables::qsin256_uint8_t::length -
-      (tmp >> 8)-
-      1
-    );
-    
-    /* Serial.print("SlopeEnv reads: "); */
-    /* Serial.println(tmp2); */
-    
-    return tmp2 << 8;
-  } 
-};
-
-////////////////////////////////////////////////////////////////////////////////
 // AREnvelope
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -170,6 +138,36 @@ class AREnvelope : public REnvelope<srate, sample_type> {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+// ASREnvelope
+////////////////////////////////////////////////////////////////////////////////
+
+template <uint32_t srate, typename sample_type = uint16_t >
+  class ASREnvelope : public AREnvelope<srate, sample_type>, public lamb::Stoppable {
+  public:
+    bool gate;
+  
+    inline ASREnvelope() : gate(false){}
+
+    inline virtual ~ASREnvelope() {}
+  
+    inline virtual void trigger() {
+      gate = true;
+      REnvelope<srate, sample_type>::trigger();
+    };
+
+    inline virtual void stop() {
+      gate = false;
+    };
+
+  inline virtual sample_type read() {
+    if (gate)
+      return REnvelope<srate, sample_type>::maximum;
+    else
+      return REnvelope<srate, sample_type>::read();
+  }
+};
+
+////////////////////////////////////////////////////////////////////////////////
 // SmoothAREnvelope
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -190,3 +188,36 @@ class SmoothAREnvelope : public AREnvelope<srate, sample_type> {
       REnvelope<srate, sample_type>::trigger();
     }
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// SlopedEnvelope
+////////////////////////////////////////////////////////////////////////////////
+
+template <
+  template<uint32_t, typename> typename template_t,
+  uint32_t srate,
+  typename sample_type = uint16_t
+>
+  class SlopedEnvelope : public template_t<srate, sample_type> {
+public:
+  inline SlopedEnvelope() {}
+  inline virtual ~SlopedEnvelope() {}
+
+  inline typename template_t<srate, sample_type>::acc_type read() {
+    typename template_t<srate, sample_type>::acc_type tmp =
+      template_t<srate, sample_type>::read();
+
+    typename template_t<srate, sample_type>::acc_type tmp2 = ~pgm_read_byte(
+      lamb::Tables::qsin256_uint8_t::data +
+      lamb::Tables::qsin256_uint8_t::length -
+      (tmp >> 8)-
+      1
+    );
+    
+    /* Serial.print("SlopeEnv reads: "); */
+    /* Serial.println(tmp2); */
+    
+    return tmp2 << 8;
+  } 
+};
+
