@@ -2,8 +2,6 @@
 
 uint16_t interval;
 
-#define STOP 500
-
 #include "liblamb/src/tables/kl_256_int8_t_sin.h"
 #include "liblamb/src/tables/kl_256_uint8_t_sin.h"
 #include "liblamb/src/tables/kl_256_uint8_t_qsin.h"
@@ -44,9 +42,8 @@ volatile int8_t force_output = 0;
 
 void loop() {
   for (uint16_t ix = 0; ix < 500; ix++) {
-    if ((ix % 250) == 0) {
+    if ((ix % 250) == 0)
       VOICE.trigger();
-    }
 
     force_output = VOICE.read(); // - 128;          
   }

@@ -5,13 +5,6 @@ ISR(TIMER_ISR) {
   if (! abuff.readable())
     {}
   else {
-    #ifdef STOP
-      static uint16_t stop_ix = 0;
-      if (stop_ix >= STOP)
-        return;
-     stop_ix +=1;
-    #endif
-    
     sequencer_time++;
     uint8_t tmp = abuff.read(); 
     PWM_PORT = tmp;
