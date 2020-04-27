@@ -2,36 +2,14 @@
 
 #define VOICES 2
 #define KDIV 64
+#define VOICE instr
 
 typedef Oscillator<SRATE, int8_t> osc_type;
 typedef Oscillator<SRATE, uint8_t> lfo_type;
 
 lfo_type lfo;
 
-DEnvelope<SRATE> env;
-
 osc_type oscs[2];
-
-////////////////////////////////////////////////////////////////////////////////
-
-void setup_voice() {
-  oscs[0].set_detune_hz(0b00000000);  
-  oscs[1].set_detune_hz(0b00000000);
-  
-  oscs[0].octave = 2;
-  oscs[1].octave = 2;
-  
-  oscs[0].set_wave(osc_type::wf_sine);
-  oscs[1].set_wave(osc_type::wf_sine);
-  
-  oscs[0].set_note(60);
-  oscs[1].set_note(60);
-
-  env.set_d_hz(2 << 4);
-  
-  lfo.set_hz(8, 0b00000000);
-  lfo.set_wave(lfo_type::wf_sine);
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -39,12 +17,14 @@ class Instrument :
   public lamb::SampleProcessor<int8_t, int8_t>,
   public lamb::Triggerable
 {
-  private:
-  uint16_t ix;
-  uint8_t last_env;
-  uint8_t last_lfo;
+  // private:
+  // uint16_t ix;
+  // uint8_t last_env;
+  // uint8_t last_lfo;
 
   public:
+  DEnvelope<SRATE> env;
+
   virtual ~Instrument() {};
 
   Instrument(SampleSource<int8_t> * in) : 
@@ -120,4 +100,28 @@ class Instrument :
 lamb::UnityMix<int8_t> mixer(&oscs[0], &oscs[1]); 
 Instrument instr(&mixer);
 // lamb::ConvertToUnsigned<int8_t> converter(&oscs[0]);
+
+////////////////////////////////////////////////////////////////////////////////
+
+void setup_voice() {
+  oscs[0].set_detune_hz(0b00000000);  
+  oscs[1].set_detune_hz(0b00000000);
+  
+  oscs[0].octave = 2;
+  oscs[1].octave = 2;
+  
+  oscs[0].set_wave(osc_type::wf_sine);
+  oscs[1].set_wave(osc_type::wf_sine);
+  
+  oscs[0].set_note(60);
+  oscs[1].set_note(60);
+
+  instr.env.set_d_hz(2 << 4);
+  
+  lfo.set_hz(8, 0b00000000);
+  lfo.set_wave(lfo_type::wf_sine);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 #define VOICE instr
